@@ -57,6 +57,6 @@ destroy | - | 销毁组件
 
 ---------------
 
-### [查看DEMO](http://ajccom.sinaapp.com/demo/niceslider.html)
+### [查看DEMO](http://ajccom.github.io/niceslider/)
 
 
