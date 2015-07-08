@@ -33,6 +33,7 @@
    * @param {Boolean} drag 是否支持拖拽
    * @param {Boolean} indexBind indxBtn为true的情况下，是否给序列标签添加滑动事件
    * @param {Function} onChange 定位动画执行完成后触发
+   * @param {Boolean} noAnimate 关闭动画
    */
   var defaultConfig = {
     unlimit: true,
@@ -255,12 +256,13 @@
       this.realLength = items.length / multiple
       //Zepto对象没有outWidth方法，降级使用width
       this.itemWidth = width = items.width()
+      this.jItems.width(width)
       box.width(width * items.length)
       this.boxWidth = parseInt(box.width() / multiple, 10)
       //_setLeft(box, -1 * this.boxWidth + cfg.offset)
       content.height(box.height())
       //设置滑动范围，仅在非无缝循环下使用
-      this.rangeWidth = this.boxWidth - this.jWrapper.width()
+      this.rangeWidth = this.boxWidth - this.jWrapper.width() + cfg.offset
       this.currentLeft = cfg.index * this.itemWidth
       this.moveTo(cfg.index)
     } else {

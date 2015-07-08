@@ -10,6 +10,7 @@
     <script src="lib/jquery-2.1.1.min.js"></script>
     <script src="src/niceslider.js"></script>
     <style>
+      ol {padding: 0}
       .dom-unit {padding: 20px 0}
     
       .slider-wrapper {position: relative; border: 1px solid #bbb}
@@ -49,10 +50,10 @@
           </div>
         </div>
         <style>
-        .whole {width: 600px; height: 300px; margin: 0 auto}
-        .whole .slider-wrapper {width: 600px; height: 300px;}
+        .whole {max-width: 600px; width: 100%; height: 300px; margin: 0 auto}
+        .whole .slider-wrapper {width: 100%; height: 300px;}
         #slider1 {font-size: 0}
-        .whole .slider-item {width: 600px; height: 300px; display: inline-block; font-size: 60px; line-height: 300px; text-align: center}
+        .whole .slider-item {width: 100%; height: 300px; display: inline-block; font-size: 20px; line-height: 300px; text-align: center}
         
         </style>
       </div>
@@ -71,15 +72,17 @@
           </div>
         </div>
         <style>
-        .offset {width: 600px; height: 300px; margin: 0 auto}
-        .offset .slider-wrapper {width: 600px; height: 300px;}
+        .offset {max-width: 600px; width: 100%; height: 300px; margin: 0 auto}
+        .offset .slider-wrapper {width: 100%; height: 300px;}
         #slider2 {font-size: 0}
-        .offset .slider-item {width: 400px; height: 300px; display: inline-block; font-size: 60px; line-height: 300px; text-align: center}
+        .offset .slider-item {width: 60%; height: 300px; display: inline-block; font-size: 20px; line-height: 300px; text-align: center; position: relative}
+        .offset .slider-item:after {content: ''; position: absolute; width: 100%; height: 100%; left: 0; top: 0; border: 1px solid #bbb}
         
         </style>
       </div>
       <script>
-        var slider2 = new NiceSlider('#slider2', {unlimit: false, offset: 100})
+        var w = $('.offset').width()
+        var slider2 = new NiceSlider('#slider2', {unlimit: false, offset: w * 0.2})
       </script>
       
       <h3>用法3 - 无缝循环</h3>
@@ -93,15 +96,17 @@
           </div>
         </div>
         <style>
-        .unlimit {width: 600px; height: 300px; margin: 0 auto}
-        .unlimit .slider-wrapper {width: 600px; height: 300px;}
+        .unlimit {max-width: 600px; width: 100%; height: 300px; margin: 0 auto}
+        .unlimit .slider-wrapper {width: 100%; height: 300px;}
         #slider3 {font-size: 0}
-        .unlimit .slider-item {width: 400px; height: 300px; display: inline-block; font-size: 60px; line-height: 300px; text-align: center}
+        .unlimit .slider-item {width: 60%; height: 300px; display: inline-block; font-size: 20px; line-height: 300px; text-align: center; position: relative}
+        .unlimit .slider-item:after {content: ''; position: absolute; width: 100%; height: 100%; left: 0; top: 0; border: 1px solid #bbb}
         
         </style>
       </div>
       <script>
-        var slider3 = new NiceSlider('#slider3', {offset: 100})
+        var w = $('.unlimit').width()
+        var slider3 = new NiceSlider('#slider3', {offset: w * 0.2})
       </script>
       
       <h3>用法4 - 自动播放</h3>
@@ -115,15 +120,15 @@
           </div>
         </div>
         <style>
-        .autoplay {width: 600px; height: 300px; margin: 0 auto}
-        .autoplay .slider-wrapper {width: 600px; height: 300px;}
+        .autoplay {max-width: 600px; width: 100%; height: 300px; margin: 0 auto}
+        .autoplay .slider-wrapper {width: 100%; height: 300px;}
         #slider4 {font-size: 0}
-        .autoplay .slider-item {width: 400px; height: 300px; display: inline-block; font-size: 60px; line-height: 300px; text-align: center}
+        .autoplay .slider-item {width: 100%; height: 300px; display: inline-block; font-size: 20px; line-height: 300px; text-align: center}
         
         </style>
       </div>
       <script>
-        var slider4 = new NiceSlider('#slider4', {offset: 100, autoPlay: true, duration: 1000})
+        var slider4 = new NiceSlider('#slider4', {autoPlay: true, duration: 1000})
       </script>
       
       <h3>用法5 - 标签页功能</h3>
@@ -137,18 +142,18 @@
           </div>
         </div>
         <style>
-        .label {width: 600px; height: 300px; margin: 0 auto}
-        .label .slider-wrapper {width: 600px; height: 300px;}
+        .label {max-width: 600px; width: 100%; height: 300px; margin: 0 auto}
+        .label .slider-wrapper {width: 100%; height: 300px;}
         #slider5 {font-size: 0}
-        .label .slider-item {width: 600px; height: 300px; display: inline-block; font-size: 60px; line-height: 300px; text-align: center}
+        .label .slider-item {width: 100%; height: 300px; display: inline-block; font-size: 20px; line-height: 300px; text-align: center}
         .label .slider-steps {bottom: auto; top: -30px; height: 30px; text-align: left; padding: 0}
-        .label .slider-steps .step {width: 100px; border-radius: 0; border: 1px solid #bbb; text-align: center; font-size: 14px; line-height: 30px; height: 30px; background: #ddd; cursor: pointer; margin: 0}
+        .label .slider-steps .step {width: 30%; border-radius: 0; border: 1px solid #bbb; text-align: center; font-size: 14px; line-height: 30px; height: 30px; background: #ddd; cursor: pointer; margin: 0}
         .label .slider-steps .step.current {background: #fff}
         .label .slider-control {display: none}
         </style>
       </div>
       <script>
-        var slider5 = new NiceSlider('#slider5', {noAnimate: true, indexFormat: function (i) {
+        var slider5 = new NiceSlider('#slider5', {noAnimate: true, drag: false, indexFormat: function (i) {
           return '标签' + (i + 1)
         }})
       </script>
