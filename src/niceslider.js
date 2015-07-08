@@ -33,6 +33,7 @@
    * @param {Boolean} drag 是否支持拖拽
    * @param {Boolean} indexBind indxBtn为true的情况下，是否给序列标签添加滑动事件
    * @param {Function} onChange 定位动画执行完成后触发
+   * @param {Boolean} noAnimate 关闭动画
    */
   var defaultConfig = {
     unlimit: true,

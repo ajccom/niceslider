@@ -42,6 +42,7 @@ duration | Number | 5000 | 自动播放间隔时间
 bounce | Boolean | true | 非无缝循环时，是否支持边界回弹效果
 drag | Boolean | true | 支持手势拖拽滑动
 indexBind | Boolean | true | 索引元素点击触发定位
+noAnimate | Boolean | false | 关闭动画
 
 ## 方法
 
