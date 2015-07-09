@@ -1,5 +1,6 @@
 "use strict"
-;(function ($) {
+;(function ($) {  
+  
   /**
    * NiceSlider
    */
@@ -111,7 +112,7 @@
       _setLeft(jDom, current)
       
       //设置一下组件当前的位移值，方便手势操作时使用
-      _moveingLeft = current
+      this.moveingLeft = current
       
       pastTime += smoothNumber
       if (pastTime >= time) {
@@ -289,8 +290,7 @@
     _distance = 0,
     _currentSlider = null,
     _bound = false,
-    _sliderCount = 0,
-    _moveingLeft = 0
+    _sliderCount = 0
   
   /**
    * 获取事件对象中的坐标值
@@ -361,10 +361,9 @@
         _locked = false
       }
       //_setAutoPlay.apply(_currentSlider)
+      _currentSlider.moveingLeft = 0
       _currentSlider = null
     }
-    
-    _moveingLeft = 0
   }
   
   /**
@@ -427,7 +426,7 @@
       x = Math.min(0, Math.max(x, -1 * this.rangeWidth))
     }
     _setLeft(this.jBox, x)
-    _moveingLeft = x
+    this.moveingLeft = x
   }
   
   /**
@@ -586,7 +585,7 @@
     
     //setTimeout(function () {_setLeft(that.jBox, left)}, 0)
     
-    _setAnimate.call(this, this.touched ? _moveingLeft : this.currentLeft, left)
+    _setAnimate.call(this, this.touched ? this.moveingLeft : this.currentLeft, left)
     this.currentIndex = idx
     this.currentLeft = left
     
