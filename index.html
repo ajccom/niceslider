@@ -17,12 +17,14 @@
       @media screen and (max-width: 800px) {
         .code-unit {display: none}
       }
-    
+      
+      .block {box-sizing: padding-box}
+      
       .slider-wrapper {position: relative; border: 1px solid #159957}
       .slider-content {width: 100%; height: 100%; position: relative; overflow: hidden; color: #1e6bb8}
       
       .slider-steps {position: absolute; bottom: -20px; height: 10px; width: 100%; text-align: center; font-size: 0px}
-      .slider-steps .step {font-size: 0; display: inline-block; margin: 0 10px; width: 10px; height: 10px; border-radius: 5px; background: #159957}
+      .slider-steps .step {font-size: 0px; display: inline-block; margin: 0 10px; width: 10px; height: 10px; border-radius: 5px; background: #159957; }
       .slider-steps .current {background: #1e6bb8}
       
       .slider-control .next {position: absolute; z-index: 2; right: 0; top: 50%; margin-top: -30px; height: 60px; width: 60px; border-radius: 30px; background: #159957}
@@ -50,7 +52,7 @@
       <h3>用法1 - 整屏滑动</h3>
       
       <div class="dom-unit">
-        <div class="whole">
+        <div class="block whole">
           <div id="slider1">
             <div class="slider-item"> slider item 1</div>
             <div class="slider-item"> slider item 2</div>
@@ -73,7 +75,7 @@
       <h3>用法2 - 偏移滑动</h3>
       
       <div class="dom-unit">
-        <div class="offset">
+        <div class="block offset">
           <div id="slider2">
             <div class="slider-item"> slider item 1</div>
             <div class="slider-item"> slider item 2</div>
@@ -99,7 +101,7 @@ var slider2 = new NiceSlider('#slider2', {unlimit: false, offset: w * 0.2})</pre
       <h3>用法3 - 无缝循环</h3>
       
       <div class="dom-unit">
-        <div class="unlimit">
+        <div class="block unlimit">
           <div id="slider3">
             <div class="slider-item"> slider item 1</div>
             <div class="slider-item"> slider item 2</div>
@@ -125,7 +127,7 @@ var slider3 = new NiceSlider('#slider3', {offset: w * 0.2})</pre>
       <h3>用法4 - 自动播放</h3>
       
       <div class="dom-unit">
-        <div class="autoplay">
+        <div class="block autoplay">
           <div id="slider4">
             <div class="slider-item"> slider item 1</div>
             <div class="slider-item"> slider item 2</div>
@@ -147,7 +149,7 @@ var slider3 = new NiceSlider('#slider3', {offset: w * 0.2})</pre>
       <h3>用法5 - 标签页功能</h3>
       
       <div class="dom-unit">
-        <div class="label">
+        <div class="block label">
           <div id="slider5">
             <div class="slider-item"> slider item 1</div>
             <div class="slider-item"> slider item 2</div>
@@ -182,7 +184,7 @@ var slider5 = new NiceSlider('#slider5', {
       <h3>用法6 - 拉动刷新</h3>
       
       <div class="dom-unit">
-        <div class="refresh">
+        <div class="block refresh">
           <div class="loading">loading...</div>
           <div id="slider6">
             <div class="slider-item"> slider item 1</div>
