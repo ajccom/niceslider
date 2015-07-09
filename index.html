@@ -166,6 +166,7 @@
       
       <div class="dom-unit">
         <div class="refresh">
+          <div class="loading">loading...</div>
           <div id="slider6">
             <div class="slider-item"> slider item 1</div>
             <div class="slider-item"> slider item 2</div>
@@ -173,21 +174,26 @@
           </div>
         </div>
         <style>
-        .refresh {max-width: 600px; width: 100%; height: 300px; margin: 0 auto}
+        .refresh {max-width: 600px; width: 100%; height: 300px; margin: 0 auto; position: relative}
         .refresh .slider-wrapper {width: 100%; height: 300px;}
         #slider6 {font-size: 0}
         .refresh .slider-item {width: 100%; height: 300px; display: inline-block; font-size: 20px; line-height: 300px; text-align: center}
-        
+        .refresh .loading {display: none; position: absolute; top: 0; left: 0; width: 100%; height: 300px; line-height: 300px; text-align: center; background: rgba(255, 255, 255, 0.8); z-index: 10}
         </style>
       </div>
       <script>
+        var loading = $('.refresh .loading')
         var slider6 = new NiceSlider('#slider6', {unlimit: false, ctrlBtn: false, indexBtn: false, 
           onChange: function () {
             if (this.currentIndex === this.realLength - 1) {
+              loading.show()
               this.jBox.append('<div class="slider-item"> slider item ' + (this.realLength + 1) + '</div>')
               this.refresh({
                 index: this.currentIndex
               })
+              setTimeout(function () {
+                loading.hide()
+              }, 1000)
             }
           }
         })

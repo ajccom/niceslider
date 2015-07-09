@@ -117,9 +117,9 @@
       pastTime += smoothNumber
       if (pastTime >= time) {
         clearInterval(that._aniTimer)
-        that._animating = false
         _setLeft(jDom, end)
         args.cb && args.cb.apply(that)
+        that._animating = false
         that.cfg.onChange && that.cfg.onChange.apply(that)
       }
     }, smoothNumber)
@@ -130,7 +130,7 @@
    * @type {Function}
    */
   function _cancelAnimate () {
-    if (this._aniTimer) {clearInterval(this._aniTimer); this._animating = false}
+    if (this._animating) {clearInterval(this._aniTimer); this._animating = false; _resetIndex.apply(this)}
   }
   
   /**
@@ -439,7 +439,7 @@
       _dir ? this.prev() : this.next()
     } else {
       //根据滑动距离判断划过了多少个item
-      if (d > w / 2) {
+      if (d > w / 4) {
         deltaIndex = (_dir ? -1 : 1) * Math.ceil(d / w)
       }
       idx = idx + deltaIndex
