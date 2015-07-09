@@ -139,25 +139,15 @@
    * @param {Object} jDom jQuery/Zepto对象
    * @param {Number} left 位移值
    */
-  function _setAnimate (start, end) {
+  function _setAnimate (start, end, time) {
     //jDom.animate(data, 300, 'swing', function () {})
-    if (!this.cfg.noAnimate) {
-      _animate.call(this, {
-        dom: this.jBox,
-        start: start,
-        end: end,
-        time: 200,
-        cb: _resetIndex
-      })
-    } else {
-      _animate.call(this, {
-        dom: this.jBox,
-        start: end,
-        end: end,
-        time: 0,
-        cb: _resetIndex
-      })
-    }
+    _animate.call(this, {
+      dom: this.jBox,
+      start: start,
+      end: end,
+      time: time || 300,
+      cb: _resetIndex
+    })
   }
   
   /**
@@ -265,7 +255,7 @@
       //设置滑动范围，仅在非无缝循环下使用
       this.rangeWidth = this.boxWidth - this.jWrapper.width() + cfg.offset
       this.currentLeft = cfg.index * this.itemWidth
-      this.moveTo(cfg.index)
+      this.moveTo(cfg.index, true)
     } else {
       this.multiple = 1
       this.itemWidth = width = items.width()
@@ -276,7 +266,7 @@
       this.rangeWidth = 0
       wrapper.addClass('slider-no-effect')
       this.currentLeft = 0
-      this.moveTo(0)
+      this.moveTo(0, true)
     }
     
   }
@@ -360,7 +350,7 @@
         _currentSlider.touched = false
         _locked = false
       }
-      //_setAutoPlay.apply(_currentSlider)
+      _setAutoPlay.apply(_currentSlider)
       _currentSlider.moveingLeft = 0
       _currentSlider = null
     }
@@ -551,11 +541,12 @@
   }
   
   /**
-   * slider定位到对应index，带动画效果
+   * slider定位到对应index
    * @type {Function} 
    * @param {Number} idx
+   * @param {Boolean} isImmediate 是否立即定位
    */
-  function _moveTo (idx) {
+  function _moveTo (idx, isImmediate) {
     var l = this.jItems.length,
       w = this.itemWidth,
       offset = this.cfg.offset,
@@ -563,7 +554,7 @@
       rl = this.realLength,
       left = 0,
       that = this
-      
+    
     if (this.cfg.unlimit) {
       if (rl > 1) {
         if (idx <= 0) {
@@ -584,8 +575,11 @@
     }
     
     //setTimeout(function () {_setLeft(that.jBox, left)}, 0)
-    
-    _setAnimate.call(this, this.touched ? this.moveingLeft : this.currentLeft, left)
+    if (!isImmediate && !this.cfg.noAnimate) {
+      _setAnimate.call(this, this.touched ? this.moveingLeft : this.currentLeft, left)
+    } else {
+      _setAnimate.call(this, left, left, 0)
+    }
     this.currentIndex = idx
     this.currentLeft = left
     
@@ -652,7 +646,7 @@
       _resetItems.apply(this)
     }
     
-    var cfg = this.cfg = _handleCfg(cfg || {})
+    this.cfg = _handleCfg($.extend(this.cfg, cfg || {}))
     if (this.timer) {clearTimeout(this.timer)}
     _init.apply(this)
   }

@@ -151,8 +151,8 @@
         #slider5 {font-size: 0}
         .label .slider-item {width: 100%; height: 300px; display: inline-block; font-size: 20px; line-height: 300px; text-align: center}
         .label .slider-steps {bottom: auto; top: -30px; height: 30px; text-align: left; padding: 0}
-        .label .slider-steps .step {width: 30%; border-radius: 0; border: 1px solid #bbb; text-align: center; font-size: 14px; line-height: 30px; height: 30px; background: #ddd; cursor: pointer; margin: 0}
-        .label .slider-steps .step.current {background: #fff}
+        .label .slider-steps .step {width: 30%; border-radius: 0; text-align: center; font-size: 14px; line-height: 30px; height: 30px; background: #159957; cursor: pointer; margin: 0; color: #fff}
+        .label .slider-steps .step.current {background: #1e6bb8;}
         .label .slider-control {display: none}
         </style>
       </div>
@@ -160,6 +160,37 @@
         var slider5 = new NiceSlider('#slider5', {noAnimate: true, drag: false, indexFormat: function (i) {
           return '标签' + (i + 1)
         }})
+      </script>
+      
+      <h3>用法6 - 拉动刷新</h3>
+      
+      <div class="dom-unit">
+        <div class="refresh">
+          <div id="slider6">
+            <div class="slider-item"> slider item 1</div>
+            <div class="slider-item"> slider item 2</div>
+            <div class="slider-item"> slider item 3</div>
+          </div>
+        </div>
+        <style>
+        .refresh {max-width: 600px; width: 100%; height: 300px; margin: 0 auto}
+        .refresh .slider-wrapper {width: 100%; height: 300px;}
+        #slider6 {font-size: 0}
+        .refresh .slider-item {width: 100%; height: 300px; display: inline-block; font-size: 20px; line-height: 300px; text-align: center}
+        
+        </style>
+      </div>
+      <script>
+        var slider6 = new NiceSlider('#slider6', {unlimit: false, ctrlBtn: false, indexBtn: false, 
+          onChange: function () {
+            if (this.currentIndex === this.realLength - 1) {
+              this.jBox.append('<div class="slider-item"> slider item ' + (this.realLength + 1) + '</div>')
+              this.refresh({
+                index: this.currentIndex
+              })
+            }
+          }
+        })
       </script>
       
       <footer class="site-footer">
