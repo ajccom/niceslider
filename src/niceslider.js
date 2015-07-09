@@ -35,6 +35,7 @@
    * @param {Boolean} indexBind indxBtn为true的情况下，是否给序列标签添加滑动事件
    * @param {Function} onChange 定位动画执行完成后触发
    * @param {Boolean} noAnimate 关闭动画
+   * @param {String} animation 指定动画效果
    */
   var defaultConfig = {
     unlimit: true,
@@ -50,7 +51,8 @@
     bounce: true,
     drag: true,
     indexBind: true,
-    noAnimate: false
+    noAnimate: false,
+    animation: 'ease-out-back'
   }
   
   /**
@@ -82,11 +84,19 @@
    * @param {Number} d duration（持续时间） 置1，即d=1。
    * @return {Number}
    */
-  function _easeOutBack (t, b, c, d) {
-    var s = 1.70158
-    return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
-    //return t / d * c + b
+  var animationFunction = {
+    'ease-out-back': function _easeOutBack (t, b, c, d) {
+      var s = 1.70158
+      return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b
+    },
+    'linear': function _linear (t, b, c, d) {
+      return t / d * c + b
+    },
+    'swing' : function(t, b, c, d) {
+			return -c * (t /= d) * (t - 2) + b;
+		}
   }
+  
   
   /**
    * 动画函数
@@ -108,7 +118,7 @@
     //_animating暂时没有作用
     this._animating = true
     this._aniTimer = setInterval(function () {
-      current = _easeOutBack(pastTime, start, distence, time)
+      current = animationFunction[that.cfg.animation](pastTime, start, distence, time)
       _setLeft(jDom, current)
       
       //设置一下组件当前的位移值，方便手势操作时使用
@@ -249,7 +259,7 @@
       this.itemWidth = width = items.width()
       this.jItems.width(width)
       box.width(width * items.length)
-      this.boxWidth = parseInt(box.width() / multiple, 10)
+      this.boxWidth = Math.ceil(box.width() / multiple)
       //_setLeft(box, -1 * this.boxWidth + cfg.offset)
       content.height(box.height())
       //设置滑动范围，仅在非无缝循环下使用

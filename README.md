@@ -43,6 +43,7 @@ bounce | Boolean | true | 非无缝循环时，是否支持边界回弹效果
 drag | Boolean | true | 支持手势拖拽滑动
 indexBind | Boolean | true | 索引元素点击触发定位
 noAnimate | Boolean | false | 关闭动画
+animation | String | ease-out-back | 指定动画效果，可选的有`ease-out-back`, `linear`, `swing`
 
 ## 方法
 
@@ -50,9 +51,9 @@ noAnimate | Boolean | false | 关闭动画
 ---- | ---- | ----
 prev | - | 滑向前一项
 next | - | 滑向后一项
-setIndexTo | Number | 立即定位至某项
-moveTo | Number | 滑动至某项
-refresh | Object | 刷新组件，可以重新设定配置项
+setIndexTo | index | 立即定位至某项
+moveTo | index, isImmediate | 滑动至某项, 第二个参数决定是否跳过动画，立即定位
+refresh | config | 刷新组件，可以重新设定配置项
 destroy | - | 销毁组件
 
 ---------------
