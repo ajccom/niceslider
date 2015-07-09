@@ -1,5 +1,6 @@
 "use strict"
-;(function ($) {
+;(function ($) {  
+  
   /**
    * NiceSlider
    */
@@ -111,14 +112,14 @@
       _setLeft(jDom, current)
       
       //设置一下组件当前的位移值，方便手势操作时使用
-      _moveingLeft = current
+      this.moveingLeft = current
       
       pastTime += smoothNumber
       if (pastTime >= time) {
         clearInterval(that._aniTimer)
-        that._animating = false
         _setLeft(jDom, end)
         args.cb && args.cb.apply(that)
+        that._animating = false
         that.cfg.onChange && that.cfg.onChange.apply(that)
       }
     }, smoothNumber)
@@ -129,7 +130,7 @@
    * @type {Function}
    */
   function _cancelAnimate () {
-    if (this._aniTimer) {clearInterval(this._aniTimer); this._animating = false}
+    if (this._animating) {clearInterval(this._aniTimer); this._animating = false; _resetIndex.apply(this)}
   }
   
   /**
@@ -138,25 +139,15 @@
    * @param {Object} jDom jQuery/Zepto对象
    * @param {Number} left 位移值
    */
-  function _setAnimate (start, end) {
+  function _setAnimate (start, end, time) {
     //jDom.animate(data, 300, 'swing', function () {})
-    if (!this.cfg.noAnimate) {
-      _animate.call(this, {
-        dom: this.jBox,
-        start: start,
-        end: end,
-        time: 200,
-        cb: _resetIndex
-      })
-    } else {
-      _animate.call(this, {
-        dom: this.jBox,
-        start: end,
-        end: end,
-        time: 0,
-        cb: _resetIndex
-      })
-    }
+    _animate.call(this, {
+      dom: this.jBox,
+      start: start,
+      end: end,
+      time: time || 300,
+      cb: _resetIndex
+    })
   }
   
   /**
@@ -264,7 +255,7 @@
       //设置滑动范围，仅在非无缝循环下使用
       this.rangeWidth = this.boxWidth - this.jWrapper.width() + cfg.offset
       this.currentLeft = cfg.index * this.itemWidth
-      this.moveTo(cfg.index)
+      this.moveTo(cfg.index, true)
     } else {
       this.multiple = 1
       this.itemWidth = width = items.width()
@@ -275,7 +266,7 @@
       this.rangeWidth = 0
       wrapper.addClass('slider-no-effect')
       this.currentLeft = 0
-      this.moveTo(0)
+      this.moveTo(0, true)
     }
     
   }
@@ -289,8 +280,7 @@
     _distance = 0,
     _currentSlider = null,
     _bound = false,
-    _sliderCount = 0,
-    _moveingLeft = 0
+    _sliderCount = 0
   
   /**
    * 获取事件对象中的坐标值
@@ -360,11 +350,10 @@
         _currentSlider.touched = false
         _locked = false
       }
-      //_setAutoPlay.apply(_currentSlider)
+      _setAutoPlay.apply(_currentSlider)
+      _currentSlider.moveingLeft = 0
       _currentSlider = null
     }
-    
-    _moveingLeft = 0
   }
   
   /**
@@ -427,7 +416,7 @@
       x = Math.min(0, Math.max(x, -1 * this.rangeWidth))
     }
     _setLeft(this.jBox, x)
-    _moveingLeft = x
+    this.moveingLeft = x
   }
   
   /**
@@ -450,7 +439,7 @@
       _dir ? this.prev() : this.next()
     } else {
       //根据滑动距离判断划过了多少个item
-      if (d > w / 2) {
+      if (d > w / 4) {
         deltaIndex = (_dir ? -1 : 1) * Math.ceil(d / w)
       }
       idx = idx + deltaIndex
@@ -552,11 +541,12 @@
   }
   
   /**
-   * slider定位到对应index，带动画效果
+   * slider定位到对应index
    * @type {Function} 
    * @param {Number} idx
+   * @param {Boolean} isImmediate 是否立即定位
    */
-  function _moveTo (idx) {
+  function _moveTo (idx, isImmediate) {
     var l = this.jItems.length,
       w = this.itemWidth,
       offset = this.cfg.offset,
@@ -564,7 +554,7 @@
       rl = this.realLength,
       left = 0,
       that = this
-      
+    
     if (this.cfg.unlimit) {
       if (rl > 1) {
         if (idx <= 0) {
@@ -585,8 +575,11 @@
     }
     
     //setTimeout(function () {_setLeft(that.jBox, left)}, 0)
-    
-    _setAnimate.call(this, this.touched ? _moveingLeft : this.currentLeft, left)
+    if (!isImmediate && !this.cfg.noAnimate) {
+      _setAnimate.call(this, this.touched ? this.moveingLeft : this.currentLeft, left)
+    } else {
+      _setAnimate.call(this, left, left, 0)
+    }
     this.currentIndex = idx
     this.currentLeft = left
     
@@ -653,7 +646,7 @@
       _resetItems.apply(this)
     }
     
-    var cfg = this.cfg = _handleCfg(cfg || {})
+    this.cfg = _handleCfg($.extend(this.cfg, cfg || {}))
     if (this.timer) {clearTimeout(this.timer)}
     _init.apply(this)
   }
