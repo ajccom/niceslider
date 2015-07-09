@@ -249,7 +249,7 @@
       this.itemWidth = width = items.width()
       this.jItems.width(width)
       box.width(width * items.length)
-      this.boxWidth = parseInt(box.width() / multiple, 10)
+      this.boxWidth = Math.ceil(box.width() / multiple)
       //_setLeft(box, -1 * this.boxWidth + cfg.offset)
       content.height(box.height())
       //设置滑动范围，仅在非无缝循环下使用
