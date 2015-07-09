@@ -15,6 +15,7 @@
       
       ol {padding: 0}
       .dom-unit {padding: 20px 0}
+      .code-unit {padding: 10px 0}
     
       .slider-wrapper {position: relative; border: 1px solid #159957}
       .slider-content {width: 100%; height: 100%; position: relative; overflow: hidden; color: #1e6bb8}
@@ -66,6 +67,7 @@
       <script>
         var slider1 = new NiceSlider('#slider1', {unlimit: false})
       </script>
+      <div class="code-unit"><pre>var slider1 = new NiceSlider('#slider1', {unlimit: false})</pre></div>
       
       <h3>用法2 - 偏移滑动</h3>
       
@@ -89,6 +91,9 @@
         var w = $('.offset').width()
         var slider2 = new NiceSlider('#slider2', {unlimit: false, offset: w * 0.2})
       </script>
+      <div class="code-unit"><pre>var w = $('.offset').width()
+var slider2 = new NiceSlider('#slider2', {unlimit: false, offset: w * 0.2})</pre>
+      </div>
       
       <h3>用法3 - 无缝循环</h3>
       
@@ -112,6 +117,9 @@
         var w = $('.unlimit').width()
         var slider3 = new NiceSlider('#slider3', {offset: w * 0.2})
       </script>
+      <div class="code-unit"><pre>var w = $('.unlimit').width()
+var slider3 = new NiceSlider('#slider3', {offset: w * 0.2})</pre>
+      </div>
       
       <h3>用法4 - 自动播放</h3>
       
@@ -128,12 +136,12 @@
         .autoplay .slider-wrapper {width: 100%; height: 300px;}
         #slider4 {font-size: 0}
         .autoplay .slider-item {width: 100%; height: 300px; display: inline-block; font-size: 20px; line-height: 300px; text-align: center}
-        
         </style>
       </div>
       <script>
         var slider4 = new NiceSlider('#slider4', {autoPlay: true, duration: 1000})
       </script>
+      <div class="code-unit"><pre>var slider4 = new NiceSlider('#slider4', {autoPlay: true, duration: 1000})</pre></div>
       
       <h3>用法5 - 标签页功能</h3>
       
@@ -161,6 +169,14 @@
           return '标签' + (i + 1)
         }})
       </script>
+      <div class="code-unit"><pre>
+var slider5 = new NiceSlider('#slider5', {
+  noAnimate: true, 
+  drag: false, 
+  indexFormat: function (i) {
+    return '标签' + (i + 1)
+  }
+})</pre></div>
       
       <h3>用法6 - 拉动刷新</h3>
       
@@ -198,6 +214,29 @@
           }
         })
       </script>
+      <div class="code-unit"><pre>
+var loading = $('.refresh .loading')
+var slider6 = new NiceSlider('#slider6', {
+  unlimit: false, 
+  ctrlBtn: false, 
+  indexBtn: false, 
+  onChange: function () {
+    if (this.currentIndex === this.realLength - 1) {
+      loading.show()
+      this.jBox.append('&lt;div class="slider-item"> slider item ' + (this.realLength + 1) + '&lt;/div>')
+      this.refresh({
+        index: this.currentIndex
+      })
+      setTimeout(function () {
+        loading.hide()
+      }, 1000)
+    }
+  }
+})</pre></div>
+      
+      <hr />
+      
+      <h3>查看更多请前往<a href="https://github.com/ajccom/niceslider">README</a></h3>
       
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/ajccom/niceslider">Niceslider</a> is maintained by <a href="https://github.com/ajccom">ajccom</a>.</span>
