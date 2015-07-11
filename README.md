@@ -28,7 +28,7 @@ var slider = new NiceSlider('#slider1')
 
 ## ÅäÖÃ
 
-`new NiceSlider('#slider1', ***config***)`
+`new NiceSlider('#slider1', config)`
 
 ÅäÖÃÃû | ÀàĞÍ | Ä¬ÈÏÖµ | ËµÃ÷
 ---- | ---- | ---- | ----
@@ -47,7 +47,7 @@ indexBind | Boolean | true | Ë÷ÒıÔªËØµã»÷´¥·¢¶¨Î»
 noAnimate | Boolean | false | ¹Ø±Õ¶¯»­
 animation | String | ease-out-back | Ö¸¶¨¶¯»­Ğ§¹û£¬¿ÉÑ¡µÄÓĞ`ease-out-back`£¬`linear`
 extendAnimate | Object | - | ÓÃÓÚÀ©Õ¹¶¯»­Ğ§¹û£¬±ÈÈçÔö¼Ó`swing`£¬`ease-in`µÈ
-fullMode | Boolean | sliderÏî´óĞ¡Óë¿ÉÊÓÇøÓòÒ»Ñù£¬ÇÒÎŞÆ«ÒÆµÄÇé¿öÏÂ½¨Òé¿ªÆô£¬ĞÔÄÜ¸üÓÅ
+fullMode | Boolean | false |sliderÏî´óĞ¡Óë¿ÉÊÓÇøÓòÒ»Ñù£¬ÇÒÎŞÆ«ÒÆµÄÇé¿öÏÂ½¨Òé¿ªÆô£¬ĞÔÄÜ¸üÓÅ
 
 ## ·½·¨
 
@@ -55,7 +55,7 @@ fullMode | Boolean | sliderÏî´óĞ¡Óë¿ÉÊÓÇøÓòÒ»Ñù£¬ÇÒÎŞÆ«ÒÆµÄÇé¿öÏÂ½¨Òé¿ªÆô£¬ĞÔÄÜ¸
 ---- | ---- | ----
 prev | - | »¬ÏòÇ°Ò»Ïî
 next | - | »¬ÏòºóÒ»Ïî
-setIndexTo | index | Á¢¼´¶¨Î»ÖÁÄ³Ïî£¬ÍÆ¼öÊ¹ÓÃmoveTo
+setIndexTo | index | Á¢¼´¶¨Î»ÖÁÄ³Ïî£¬²»ÍÆ¼öÊ¹ÓÃ£¬½¨ÒéÓÃmoveToÌæ´ú
 moveTo | index, isImmediate | »¬¶¯ÖÁÄ³Ïî, µÚ¶ş¸ö²ÎÊı¾ö¶¨ÊÇ·ñÌø¹ı¶¯»­£¬Á¢¼´¶¨Î»
 refresh | config | Ë¢ĞÂ×é¼ş£¬¿ÉÒÔÖØĞÂÉè¶¨ÅäÖÃÏî
 destroy | - | Ïú»Ù×é¼ş
