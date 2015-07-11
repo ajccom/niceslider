@@ -180,7 +180,7 @@ var slider5 = new NiceSlider('#slider5', {
   }
 })</pre></div>
       
-      <h3>用法6 - 拉动刷新</h3>
+      <h3>用法6 - 下拉刷新</h3>
       
       <div class="dom-unit">
         <div class="block refresh">
@@ -201,7 +201,7 @@ var slider5 = new NiceSlider('#slider5', {
       </div>
       <script>
         var loading = $('.refresh .loading')
-        var slider6 = new NiceSlider('#slider6', {unlimit: false, ctrlBtn: false, indexBtn: false, 
+        var slider6 = new NiceSlider('#slider6', {unlimit: false, ctrlBtn: false, indexBtn: false, dir: 'v',
           onChange: function () {
             if (this.currentIndex === this.realLength - 1) {
               loading.show()
@@ -222,6 +222,7 @@ var slider6 = new NiceSlider('#slider6', {
   unlimit: false, 
   ctrlBtn: false, 
   indexBtn: false, 
+  dir: 'v',
   onChange: function () {
     if (this.currentIndex === this.realLength - 1) {
       loading.show()
