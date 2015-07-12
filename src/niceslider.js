@@ -715,6 +715,7 @@
     
     this.cfg = _handleCfg($.extend(this.cfg, cfg || {}))
     if (this.timer) {clearTimeout(this.timer)}
+    _sliderCount--
     _init.apply(this)
   }
   
