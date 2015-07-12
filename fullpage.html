@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>NiceSlider - A Lightweight Touch Slider</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <script src="lib/jquery-2.1.1.min.js"></script>
+    <script src="src/niceslider-fullpage.js"></script>
+    <style>
+      
+      ol {padding: 0}
+      .dom-unit {padding: 20px 0}
+      .code-unit {padding: 10px 0}
+      @media screen and (max-width: 800px) {
+        .code-unit {display: none}
+      }
+      
+      .block {box-sizing: padding-box}
+      
+      .slider-wrapper {position: relative; border: 1px solid #159957}
+      .slider-content {width: 100%; font-size: 0px; -webkit-text-size-adjust: none; height: 100%; position: relative; overflow: hidden; color: #1e6bb8;}
+      
+      .slider-steps {position: absolute; bottom: -20px; height: 10px; width: 100%; text-align: center; font-size: 0px}
+      .slider-steps .step {font-size: 0px; display: inline-block; margin: 0 10px; width: 10px; height: 10px; border-radius: 5px; background: #159957; overflow: hidden; text-indent: -20px;}
+      .slider-steps .current {background: #1e6bb8}
+      
+      .slider-control .next {position: absolute; z-index: 2; right: 0; top: 50%; margin-top: -30px; height: 60px; width: 60px; border-radius: 30px; background: #159957}
+      .slider-control .next-s {width: 10px; height: 10px; border-radius: 5px; position: absolute; right: 5px; margin-top: -5px; top: 50%; background: rgba(255, 255, 255, 0.6)}
+      .slider-control .prev {position:absolute; z-index: 2; left: 0; top: 50%; margin-top: -30px; height: 60px; width: 60px; border-radius: 30px; background: #159957}
+      .slider-control .prev-s {width: 10px; height: 10px; border-radius: 5px; position: absolute; left: 5px; margin-top: -5px; top: 50%; background: rgba(255, 255, 255, 0.6)}
+      .slider-control .disable {opacity: 0.5}
+      
+      .slider-item {position: relative}
+      
+      .slider-no-effect .slider-control {display: none}
+    </style>
+  </head>
+  <body>
+    <div id="debug" style="position: fixed; top: 0; left: 0; z-index: 100; background: #000; padding: 20px; color: #fff; font-size: 20px"></div>
+    <script>
+    function log (s) {
+      $('#debug').html(s)
+      console.log(s)
+    }
+    </script>
+    
+    <section class="page-header">
+      <h1 class="project-name">NiceSlider</h1>
+      <h2 class="project-tagline">A lightweight touch slider </h2>
+      <a href="https://github.com/ajccom/niceslider" class="btn">View on GitHub</a>
+      <a href="https://github.com/ajccom/niceslider/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/ajccom/niceslider/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h3>用法1 - 整屏滑动</h3>
+      
+      <div class="dom-unit">
+        <div class="block whole">
+          <div id="slider1">
+            <div class="slider-item"> slider item 1</div>
+            <div class="slider-item"> slider item 2</div>
+            <div class="slider-item"> slider item 3</div>
+          </div>
+        </div>
+        <style>
+        .whole {max-width: 600px; width: 100%; height: 300px; margin: 0 auto}
+        .whole .slider-wrapper {width: 100%; height: 300px;}
+        #slider1 {font-size: 0; height: 300px;}
+        .whole .slider-item {width: 100%; height: 300px; float: left; font-size: 20px; line-height: 300px; text-align: center}
+        </style>
+      </div>
+      <script>
+        var slider1 = new NiceSlider('#slider1', {unlimit: false})
+      </script>
+      <div class="code-unit"><pre>var slider1 = new NiceSlider('#slider1', {unlimit: false})</pre></div>
+            
+      <h3>用法2 - 无缝循环</h3>
+      
+      <div class="dom-unit">
+        <div class="block unlimit">
+          <div id="slider2">
+            <div class="slider-item"> slider item 1</div>
+            <div class="slider-item"> slider item 2</div>
+            <div class="slider-item"> slider item 3</div>
+          </div>
+        </div>
+        <style>
+        .unlimit {max-width: 600px; width: 100%; height: 300px; margin: 0 auto}
+        .unlimit .slider-wrapper {width: 100%; height: 300px;}
+        #slider3 {font-size: 0; height: 300px;}
+        .unlimit .slider-item {width: 100%; height: 300px; float: left; font-size: 20px; line-height: 300px; text-align: center}
+        
+        </style>
+      </div>
+      <script>
+        var slider2 = new NiceSlider('#slider2')
+      </script>
+      <div class="code-unit"><pre>var slider2 = new NiceSlider('#slider2')</pre></div>
+      
+      <h3>用法3 - 自动播放</h3>
+      
+      <div class="dom-unit">
+        <div class="block autoplay">
+          <div id="slider3">
+            <div class="slider-item"> slider item 1</div>
+            <div class="slider-item"> slider item 2</div>
+            <div class="slider-item"> slider item 3</div>
+          </div>
+        </div>
+        <style>
+        .autoplay {max-width: 600px; width: 100%; height: 300px; margin: 0 auto}
+        .autoplay .slider-wrapper {width: 100%; height: 300px;}
+        #slider3 {font-size: 0; height: 300px;}
+        .autoplay .slider-item {width: 100%; height: 300px; float: left; font-size: 20px; line-height: 300px; text-align: center}
+        </style>
+      </div>
+      <script>
+        var slider3 = new NiceSlider('#slider3', {autoPlay: true, duration: 3000, animation: 'linear'})
+      </script>
+      <div class="code-unit"><pre>var slider3 = new NiceSlider('#slider3', {autoPlay: true, duration: 3000, animation: 'linear'})</pre></div>
+            
+      <h3>用法4 - 下拉刷新</h3>
+      
+      <div class="dom-unit">
+        <div class="block refresh">
+          <div class="loading">loading...</div>
+          <div id="slider4">
+            <div class="slider-item"> slider item 1</div>
+            <div class="slider-item"> slider item 2</div>
+            <div class="slider-item"> slider item 3</div>
+          </div>
+        </div>
+        <style>
+        .refresh {max-width: 600px; width: 100%; height: 300px; margin: 0 auto; position: relative}
+        .refresh .slider-wrapper {width: 100%; height: 300px;}
+        #slider4 {font-size: 0; height: 300px;}
+        .refresh .slider-item {width: 100%; height: 300px; float: left; font-size: 20px; line-height: 300px; text-align: center}
+        .refresh .loading {display: none; position: absolute; top: 0; left: 0; width: 100%; height: 300px; line-height: 300px; text-align: center; background: rgba(255, 255, 255, 0.8); z-index: 10}
+        </style>
+      </div>
+      <script>
+        var loading = $('.refresh .loading')
+        var slider4 = new NiceSlider('#slider4', {unlimit: false, ctrlBtn: false, indexBtn: false, dir: 'v',
+          onChange: function () {
+            if (this.currentIndex === this.realLength - 1) {
+              loading.show()
+              this.jShadowBox.append('<div class="slider-item"> slider item ' + (this.realLength + 1) + '</div>')
+              this.refresh({
+                index: this.currentIndex
+              })
+              setTimeout(function () {
+                loading.hide()
+              }, 1000)
+            }
+          }
+        })
+      </script>
+      <div class="code-unit"><pre>
+var loading = $('.refresh .loading')
+var slider4 = new NiceSlider('#slider4', {
+  unlimit: false, 
+  ctrlBtn: false, 
+  indexBtn: false, 
+  dir: 'v',
+  onChange: function () {
+    if (this.currentIndex === this.realLength - 1) {
+      loading.show()
+      this.jBox.append('&lt;div class="slider-item"> slider item ' + (this.realLength + 1) + '&lt;/div>')
+      this.refresh({
+        index: this.currentIndex
+      })
+      setTimeout(function () {
+        loading.hide()
+      }, 1000)
+    }
+  }
+})</pre></div>
+      
+      <hr />
+      
+      <h3>查看更多请前往<a href="https://github.com/ajccom/niceslider">README</a></h3>
+      
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/ajccom/niceslider">Niceslider</a> is maintained by <a href="https://github.com/ajccom">ajccom</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  </body>
+</html>
+
