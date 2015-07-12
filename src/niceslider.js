@@ -46,7 +46,6 @@
    * @param {Function} onChange 定位动画执行完成后触发
    * @param {Boolean} noAnimate 关闭动画
    * @param {String} animation 指定动画效果
-   * @param {Boolean} fullMode slider项大小与可视区域一样，且无偏移的情况下建议开启，性能更优
    */
   var _defaultConfig = {
     unlimit: true,
@@ -70,8 +69,7 @@
     drag: true,
     indexBind: true,
     noAnimate: false,
-    animation: 'ease-out-back',
-    fullMode: false
+    animation: 'ease-out-back'
   }
   
   /**
