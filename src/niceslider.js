@@ -6,18 +6,27 @@
    */
   
   //兼容PC与移动端事件
-  var mobileCheck = 'ontouchend' in document,
+  var _mobileCheck = 'ontouchend' in document,
     ev = {
       click: 'click',
-      start: mobileCheck ? 'touchstart' : 'mousedown',
-      move: mobileCheck ? 'touchmove' : 'mousemove',
-      end: mobileCheck ? 'touchend' : 'mouseup'
+      start: _mobileCheck ? 'touchstart' : 'mousedown',
+      move: _mobileCheck ? 'touchmove' : 'mousemove',
+      end: _mobileCheck ? 'touchend' : 'mouseup'
     }
   
   //获取浏览器前缀
-  var prefix = (function () {
-    var div = document.createElement('div')
-    return typeof div.style.webkitTransform !== 'undefined' ? '-webkit-' : (typeof div.style.mozTransform ? '-moz-' : '')
+  var _prefix = (function () {
+    var div = document.createElement('div'),
+      style = div.style
+    if (style.webkitTransform) {
+      return '-webkit-'
+    } else if (style.mozTransform) {
+      return '-moz-' 
+    } else if (style.msTransform) {
+      return '-ms-'
+    } else {
+      return ''
+    }
   }())
   
   /**
@@ -28,6 +37,7 @@
    * @param {Function} indexFormat indxBtn为true的情况下，序列标签内容的format函数。返回值将被插入标签元素中
    * @param {Number} offset 偏移值
    * @param {Number} index 初始项序号
+   * @param {String} dir 移动方向
    * @param {Boolean} autoPlay 是否自动播放
    * @param {Number} duration 自动播放间隔时间
    * @param {Boolean} bounce 是否具有回弹效果
@@ -37,15 +47,22 @@
    * @param {Boolean} noAnimate 关闭动画
    * @param {String} animation 指定动画效果
    */
-  var defaultConfig = {
+  var _defaultConfig = {
     unlimit: true,
     ctrlBtn: true,
     indexBtn: true,
     /*indexFormat: function (i) {
       return '第' + i + '个'
-    },*/
+    },
+    extendAnimate: {
+      'swing': function (t, b, c, d) {
+        return t / d * c + b
+      }
+    }
+    */
     offset: 0,
     index: 0,
+    dir: 'h',
     autoPlay: false,
     duration: 5000,
     bounce: true,
@@ -62,18 +79,21 @@
    * @return {Object}
    */
   function _handleCfg (cfg) {
-    return $.extend({}, defaultConfig, cfg)
+    return $.extend({}, _defaultConfig, cfg)
   }
   
   /**
    * 设置元素位移
    * @type {Function} 
    * @param {Object} jDom jQuery/Zepto对象
-   * @param {Number} left 位移值
+   * @param {Number} dist 位移值
    */
-  function _setLeft (jDom, left) {
-    //jDom.css({left: left})
-    jDom.css(prefix + 'transform', 'translate3d(' + left + 'px, 0, 0)')        
+  function _setDist (jDom, dist, isVertical) {
+    if (!isVertical) {
+      jDom.css(_prefix + 'transform', 'translate3d(' + dist + 'px, 0, 0)')
+    } else {
+      jDom.css(_prefix + 'transform', 'translate3d(0, ' + dist + 'px, 0)')
+    }
   }
   
   /**
@@ -84,19 +104,23 @@
    * @param {Number} d duration（持续时间） 置1，即d=1。
    * @return {Number}
    */
-  var animationFunction = {
-    'ease-out-back': function _easeOutBack (t, b, c, d) {
+  var _animationFunction = {
+    'ease-out-back': function (t, b, c, d) {
       var s = 1.70158
       return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b
     },
-    'linear': function _linear (t, b, c, d) {
+    'linear': function (t, b, c, d) {
       return t / d * c + b
-    },
-    'swing' : function(t, b, c, d) {
-			return -c * (t /= d) * (t - 2) + b;
-		}
+    }
   }
   
+  /**
+   * 添加动画函数
+   * @param {Object} obj 新增函数
+   */
+  function _extendAnimate (obj) {
+    $.extend(_animationFunction, obj)
+  }
   
   /**
    * 动画函数
@@ -113,21 +137,26 @@
       smoothNumber = 10,
       //unitDistence = speed * smoothNumber,
       pastTime = 0,
+      isVertical = this.isVertical,
       that = this
     if (this._aniTimer) {clearInterval(this._aniTimer)}
     //_animating暂时没有作用
     this._animating = true
     this._aniTimer = setInterval(function () {
-      current = animationFunction[that.cfg.animation](pastTime, start, distence, time)
-      _setLeft(jDom, current)
+      if (_animationFunction[that.cfg.animation]) {
+        current = _animationFunction[that.cfg.animation](pastTime, start, distence, time)
+      } else {
+        current = _animationFunction.linear(pastTime, start, distence, time)
+      }
+      _setDist(jDom, current, isVertical)
       
       //设置一下组件当前的位移值，方便手势操作时使用
-      this.moveingLeft = current
+      this.moveingDist = current
       
       pastTime += smoothNumber
       if (pastTime >= time) {
         clearInterval(that._aniTimer)
-        _setLeft(jDom, end)
+        _setDist(jDom, end, isVertical)
         args.cb && args.cb.apply(that)
         that._animating = false
         that.cfg.onChange && that.cfg.onChange.apply(that)
@@ -218,7 +247,11 @@
       wrapper = null,
       content = null,
       width = 0,
-      multiple = 1
+      height = 0,
+      multiple = 1,
+      isVertical = cfg.dir === 'h' ? false : true
+    
+    this.isVertical = isVertical
     
     //处理refresh情况
     if (this.jWrapper) {
@@ -257,26 +290,45 @@
       this.realLength = items.length / multiple
       //Zepto对象没有outWidth方法，降级使用width
       this.itemWidth = width = items.width()
-      this.jItems.width(width)
-      box.width(width * items.length)
-      this.boxWidth = Math.ceil(box.width() / multiple)
-      //_setLeft(box, -1 * this.boxWidth + cfg.offset)
-      content.height(box.height())
-      //设置滑动范围，仅在非无缝循环下使用
-      this.rangeWidth = this.boxWidth - this.jWrapper.width() + cfg.offset
-      this.currentLeft = cfg.index * this.itemWidth
+      this.itemHeight = height = items.height()
+      if (!isVertical) {
+        this.jItems.width(width)
+        box.width(width * items.length)
+        this.boxWidth = Math.ceil(box.width() / multiple)
+        content.height(box.height())
+        this.rangeWidth = this.boxWidth - this.jWrapper.width() + cfg.offset
+        this.currentLeft = cfg.index * this.itemWidth
+      } else {
+        this.jItems.height(height)
+        box.height(height * items.length)
+        this.boxHeight = Math.ceil(box.height() / multiple)
+        content.width(box.width())
+        this.rangeHeight = this.boxHeight - this.jWrapper.height() + cfg.offset
+        this.currentTop = cfg.index * this.itemHeight
+      }
       this.moveTo(cfg.index, true)
     } else {
       this.multiple = 1
       this.itemWidth = width = items.width()
+      this.itemHeight = height = items.height()
       this.realLength = 1
-      box.width(width)
-      content.height(box.height())
-      this.boxWidth = width
-      this.rangeWidth = 0
-      wrapper.addClass('slider-no-effect')
-      this.currentLeft = 0
-      this.moveTo(0, true)
+      if (!isVertical) {
+        box.width(width)
+        content.height(box.height())
+        this.boxWidth = width
+        this.rangeWidth = 0
+        wrapper.addClass('slider-no-effect')
+        this.currentLeft = 0
+        this.moveTo(0, true)
+      } else {
+        box.height(height)
+        content.width(box.width())
+        this.boxHeight = height
+        this.rangeHeight = 0
+        wrapper.addClass('slider-no-effect')
+        this.currentTop = 0
+        this.moveTo(0, true)
+      }
     }
     
   }
@@ -340,7 +392,7 @@
     if (_currentSlider && _currentSlider.cfg.drag) {
       if (_currentSlider.touched) {
         _currentPoint = _getXY(e)
-        _handleMove.call(_currentSlider, _currentPoint.x - _origin.x)
+        _handleMove.call(_currentSlider, _currentSlider.isVertical ? (_currentPoint.y - _origin.y) : (_currentPoint.x - _origin.x))
         if (_locked) {e.preventDefault()}
       }
     }
@@ -361,7 +413,7 @@
         _locked = false
       }
       _setAutoPlay.apply(_currentSlider)
-      _currentSlider.moveingLeft = 0
+      _currentSlider.moveingDist = 0
       _currentSlider = null
     }
   }
@@ -389,7 +441,8 @@
   function _checkDir (deltaX, deltaY) {
     if (!_isChecked) {
       _isChecked = true
-      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+      
+      if ((this.isVertical && Math.abs(deltaX) > Math.abs(deltaY))|| (!this.isVertical && Math.abs(deltaY) > Math.abs(deltaX))) {
         _locked = false
         this.touched = false
       } else {
@@ -401,16 +454,16 @@
   /**
    * 处理跟随移动
    * @type {Function} 
-   * @param {Number} deltaX
+   * @param {Number} delta
    */
-  function _handleMove (deltaX) {
+  function _handleMove (delta) {
     if (!_isChecked) {
       _checkDir.call(this, _currentPoint.x - _origin.x, _currentPoint.y - _origin.y)
     }
     //设置slider滑动方向
-    _dir = deltaX > 0
-    _distance = deltaX
-    _move.call(this, deltaX)
+    _dir = delta > 0
+    _distance = delta
+    _move.call(this, delta)
   }
   
   ///////////////drag相关
@@ -418,15 +471,18 @@
   /**
    * slider相对当前位置做移动
    * @type {Function} 
-   * @param {Number} x 位移距离
+   * @param {Number} dist 位移距离
    */
-  function _move (x) {
-    var x = this.currentLeft + x
+  function _move (dist) {
+    var isVertical = this.isVertical,
+      origin = isVertical ? this.currentTop : this.currentLeft,
+      range = isVertical ? this.rangeHeight : this.rangeWidth
+    var dist = origin + dist
     if (!this.cfg.bounce && !this.cfg.unlimit) {
-      x = Math.min(0, Math.max(x, -1 * this.rangeWidth))
+      dist = Math.min(0, Math.max(dist, -1 * range))
     }
-    _setLeft(this.jBox, x)
-    this.moveingLeft = x
+    _setDist(this.jBox, dist, isVertical)
+    this.moveingDist = dist
   }
   
   /**
@@ -434,8 +490,9 @@
    * @type {Function} 
    */
   function _checkIndex () {
-    var idx = this.currentIndex,
-      w = this.itemWidth,
+    var isVertical = this.isVertical,
+      idx = this.currentIndex,
+      unitDist = isVertical ? this.itemHeight : this.itemWidth,
       l = this.jItems.length,
       rl = this.realLength,
       d = Math.abs(_distance),
@@ -444,13 +501,11 @@
     if (_dir === 0) {return}
             
     if (this.cfg.unlimit) {
-      //idx = idx + (_dir ? -1 : 1)
-      //this.moveTo(idx)
       _dir ? this.prev() : this.next()
     } else {
       //根据滑动距离判断划过了多少个item
-      if (d > w / 4) {
-        deltaIndex = (_dir ? -1 : 1) * Math.ceil(d / w)
+      if (d > unitDist / 4) {
+        deltaIndex = (_dir ? -1 : 1) * Math.ceil(d / unitDist)
       }
       idx = idx + deltaIndex
       idx = Math.max(0, Math.min(idx, this.realLength - 1))
@@ -557,12 +612,14 @@
    * @param {Boolean} isImmediate 是否立即定位
    */
   function _moveTo (idx, isImmediate) {
-    var l = this.jItems.length,
-      w = this.itemWidth,
+    var isVertical = this.isVertical,
+      l = this.jItems.length,
+      unitDist = isVertical ? this.itemHeight : this.itemWidth,
+      range = isVertical ? this.rangeHeight : this.rangeWidth,
       offset = this.cfg.offset,
       multiple = this.multiple,
       rl = this.realLength,
-      left = 0,
+      dist = 0,
       that = this
     
     if (this.cfg.unlimit) {
@@ -574,24 +631,23 @@
           idx = l - 1 - rl
           this.setIndexTo(idx - 1)
         }
-        left = -1 * idx * w + offset
+        dist = -1 * idx * unitDist + offset
       } else {
         idx = 0
-        left = offset
+        dist = offset
       }
     } else {
       idx = idx % l
-      left = Math.max(-1 * idx * w + offset, -1 * this.rangeWidth)
+      dist = Math.max(-1 * idx * unitDist + offset, -1 * range)
     }
     
-    //setTimeout(function () {_setLeft(that.jBox, left)}, 0)
     if (!isImmediate && !this.cfg.noAnimate) {
-      _setAnimate.call(this, this.touched ? this.moveingLeft : this.currentLeft, left)
+      _setAnimate.call(this, this.touched ? this.moveingDist : (isVertical ? this.currentTop : this.currentLeft), dist)
     } else {
-      _setAnimate.call(this, left, left, 0)
+      _setAnimate.call(this, dist, dist, 0)
     }
     this.currentIndex = idx
-    this.currentLeft = left
+    this[isVertical ? 'currentTop' : 'currentLeft'] = dist
     
     if (this.jSteps) {_toggleStepTo.apply(this)}
     if (this.cfg.ctrlBtn) {_checkCtrlBtn.apply(this)}
@@ -604,17 +660,18 @@
    * @param {Number} idx
    */
   function _setIndexTo (idx) {
-    var wrapper = this.jWrapper,
+    var isVertical = this.isVertical,
+      wrapper = this.jWrapper,
       l = this.jItems.length,
-      w = this.itemWidth,
+      unitDist = isVertical ? this.itemHeight : this.itemWidth,
       offset = this.cfg.offset,
-      left = 0
+      dist = 0
     if (idx.toString() === 'NaN') {return}
     idx = parseInt(idx, 10) % l
-    left = -1 * idx * w + offset
-    _setLeft(this.jBox, left)
+    dist = -1 * idx * unitDist + offset
+    _setDist(this.jBox, dist, isVertical)
     this.currentIndex = idx
-    this.currentLeft = left
+    this[isVertical ? 'currentTop' : 'currentLeft'] = dist
   }
   
   /**
@@ -724,6 +781,7 @@
    */
   function _init () {
     this.currentIndex = this.cfg.index
+    if (this.cfg.extendAnimate) {_extendAnimate(this.cfg.extendAnimate)}
     _create.apply(this)
     _bind.apply(this)
     _setAutoPlay.apply(this)

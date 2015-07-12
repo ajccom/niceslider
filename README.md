@@ -47,7 +47,6 @@ indexBind | Boolean | true | 索引元素点击触发定位
 noAnimate | Boolean | false | 关闭动画
 animation | String | ease-out-back | 指定动画效果，可选的有`ease-out-back`，`linear`
 extendAnimate | Object | - | 用于扩展动画效果，比如增加`swing`，`ease-in`等
-fullMode | Boolean | false |slider项大小与可视区域一样，且无偏移的情况下建议开启，性能更优
 
 ## 方法
 
