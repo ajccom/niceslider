@@ -7,7 +7,8 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
-    <script src="lib/jquery-2.1.1.min.js"></script>
+    <!--script src="lib/jquery-2.1.1.min.js"></script-->
+    <script src="lib/zepto.js"></script>
     <script src="src/niceslider.js"></script>
     <style>
       
@@ -67,7 +68,7 @@
         </style>
       </div>
       <script>
-        var slider1 = new NiceSlider('#slider1', {unlimit: false})
+        var slider1 = new NiceSlider('#slider1', {unlimit: false, onChange: function () {alert(this.jBox.attr('css'))}})
       </script>
       <div class="code-unit"><pre>var slider1 = new NiceSlider('#slider1', {unlimit: false})</pre></div>
       
