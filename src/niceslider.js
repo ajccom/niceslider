@@ -457,6 +457,8 @@
         _sliderArray.shift()
         if (_sliderArray.length) {
           _isChecked = false
+        } else {
+          this.touched = false
         }
       } else {
         _locked = true
@@ -472,6 +474,7 @@
   function _handleMove (delta) {
     if (!_isChecked) {
       _checkDir.call(this, _currentPoint.x - _origin.x, _currentPoint.y - _origin.y)
+      return
     }
     //设置slider滑动方向
     _dir = delta > 0
