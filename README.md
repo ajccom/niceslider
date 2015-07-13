@@ -56,6 +56,7 @@ prev | - | 滑向前一项
 next | - | 滑向后一项
 setIndexTo | index | 立即定位至某项，不推荐使用，建议用moveTo替代
 moveTo | index, isImmediate | 滑动至某项, 第二个参数决定是否跳过动画，立即定位
+getIndex | - | 获取组件当前的索引
 refresh | config | 刷新组件，可以重新设定配置项
 destroy | - | 销毁组件
 
