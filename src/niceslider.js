@@ -15,7 +15,7 @@
     }
   
   //获取浏览器前缀
-  var _prefix = (function () {
+  /*var _prefix = (function () {
     var div = document.createElement('div'),
       style = div.style
     if (style.webkitTransform) {
@@ -27,7 +27,7 @@
     } else {
       return ''
     }
-  }())
+  }())*/
   
   /**
    * 配置项
@@ -89,11 +89,17 @@
    * @param {Number} dist 位移值
    */
   function _setDist (jDom, dist, isVertical) {
+    var d = {}
+    //Zepto在一些浏览器上设置translate3d无效
+    //可手动开启硬件加速
     if (!isVertical) {
-      jDom.css(_prefix + 'transform', 'translate3d(' + dist + 'px, 0, 0)')
+      //d[_prefix + 'ransform'] = 'translate3d(' + dist + 'px, 0, 0)'
+      d.left = dist + 'px'
     } else {
-      jDom.css(_prefix + 'transform', 'translate3d(0, ' + dist + 'px, 0)')
+      //d[_prefix + 'ransform'] = 'translate3d(0, ' + dist + 'px, 0)'
+      d.top = dist + 'px'
     }
+    jDom.css(d)
   }
   
   /**
@@ -263,7 +269,7 @@
     }
     
     box.wrap(html)
-    this.jWrapper = wrapper = box.parents('.slider-wrapper')
+    this.jWrapper = wrapper = box.closest('.slider-wrapper')
     this.jItems = items = box.children()
     this.jContent = content = wrapper.find('.slider-content')
     if (cfg.ctrlBtn) {
@@ -341,6 +347,7 @@
     _dir = true,
     _distance = 0,
     _currentSlider = null,
+    _sliderArray = [],
     _bound = false,
     _sliderCount = 0
   
@@ -379,7 +386,7 @@
     _isChecked = false
     _dir = 0
     _distance = 0
-    _currentSlider = this
+    _sliderArray.push(this)
     if (this.timer) {clearTimeout(this.timer)}
   }
   
@@ -389,6 +396,7 @@
    * @param {Object} e
    */
   function _touchmove (e) {
+    _currentSlider = _sliderArray[0]
     if (_currentSlider && _currentSlider.cfg.drag) {
       if (_currentSlider.touched) {
         _currentPoint = _getXY(e)
@@ -415,6 +423,7 @@
       _setAutoPlay.apply(_currentSlider)
       _currentSlider.moveingDist = 0
       _currentSlider = null
+      _sliderArray = []
     }
   }
   
@@ -445,6 +454,10 @@
       if ((this.isVertical && Math.abs(deltaX) > Math.abs(deltaY))|| (!this.isVertical && Math.abs(deltaY) > Math.abs(deltaX))) {
         _locked = false
         this.touched = false
+        _sliderArray.shift()
+        if (_sliderArray.length) {
+          _isChecked = false
+        }
       } else {
         _locked = true
       }
@@ -556,6 +569,14 @@
       nb = this.jNextBtn
      
     this.jSteps.find('.step').removeClass('current').eq(idx % l).addClass('current')
+  }
+  
+  /**
+   * 提供一个接口让用户获得正确的当前索引
+   * @type {Function} 
+   */
+  function _getIndex () {
+    return this.currentIndex % l
   }
   
   /**
@@ -806,6 +827,7 @@
     next: _next,
     setIndexTo: _setIndexTo,
     moveTo: _moveTo,
+    getIndex: _getIndex,
     refresh: _refresh,
     destroy: _destroy
   }
