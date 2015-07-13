@@ -15,7 +15,7 @@
     }
   
   //获取浏览器前缀
-  var _prefix = (function () {
+  /*var _prefix = (function () {
     var div = document.createElement('div'),
       style = div.style
     if (style.webkitTransform) {
@@ -27,7 +27,7 @@
     } else {
       return ''
     }
-  }())
+  }())*/
   
   /**
    * 配置项
@@ -89,11 +89,17 @@
    * @param {Number} dist 位移值
    */
   function _setDist (jDom, dist, isVertical) {
+    var d = {}
+    //Zepto在一些浏览器上设置translate3d无效
+    //可手动开启硬件加速
     if (!isVertical) {
-      jDom.css(_prefix + 'transform', 'translate3d(' + dist + 'px, 0, 0)')
+      //d[_prefix + 'ransform'] = 'translate3d(' + dist + 'px, 0, 0)'
+      d.left = dist + 'px'
     } else {
-      jDom.css(_prefix + 'transform', 'translate3d(0, ' + dist + 'px, 0)')
+      //d[_prefix + 'ransform'] = 'translate3d(0, ' + dist + 'px, 0)'
+      d.top = dist + 'px'
     }
+    jDom.css(d)
   }
   
   /**
@@ -263,7 +269,7 @@
     }
     
     box.wrap(html)
-    this.jWrapper = wrapper = box.parents('.slider-wrapper')
+    this.jWrapper = wrapper = box.closest('.slider-wrapper')
     this.jItems = items = box.children()
     this.jContent = content = wrapper.find('.slider-content')
     if (cfg.ctrlBtn) {
@@ -559,6 +565,14 @@
   }
   
   /**
+   * 提供一个接口让用户获得正确的当前索引
+   * @type {Function} 
+   */
+  function _getIndex () {
+    return this.currentIndex % l
+  }
+  
+  /**
    * 执行自动播放
    * @type {Function} 
    */
@@ -806,6 +820,7 @@
     next: _next,
     setIndexTo: _setIndexTo,
     moveTo: _moveTo,
+    getIndex: _getIndex,
     refresh: _refresh,
     destroy: _destroy
   }

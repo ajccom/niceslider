@@ -62,7 +62,7 @@
         <style>
         .whole {max-width: 600px; width: 100%; height: 300px; margin: 0 auto}
         .whole .slider-wrapper {width: 100%; height: 300px;}
-        #slider1 {font-size: 0; height: 300px;}
+        #slider1 {font-size: 0; height: 300px; position: absolute; width: 100%}
         .whole .slider-item {width: 100%; height: 300px; float: left; font-size: 20px; line-height: 300px; text-align: center}
         
         </style>
@@ -85,7 +85,7 @@
         <style>
         .offset {max-width: 600px; width: 100%; height: 300px; margin: 0 auto}
         .offset .slider-wrapper {width: 100%; height: 300px;}
-        #slider2 {font-size: 0; height: 300px;}
+        #slider2 {font-size: 0; height: 300px; position: absolute; width: 100%}
         .offset .slider-item {width: 60%; height: 300px; float: left; font-size: 20px; line-height: 300px; text-align: center;}
         
         </style>
@@ -111,7 +111,7 @@ var slider2 = new NiceSlider('#slider2', {unlimit: false, offset: w * 0.2})</pre
         <style>
         .unlimit {max-width: 600px; width: 100%; height: 300px; margin: 0 auto}
         .unlimit .slider-wrapper {width: 100%; height: 300px;}
-        #slider3 {font-size: 0; height: 300px;}
+        #slider3 {font-size: 0; height: 300px; position: absolute; width: 100%}
         .unlimit .slider-item {width: 60%; height: 300px; float: left; font-size: 20px; line-height: 300px; text-align: center;}
         
         </style>
@@ -137,7 +137,7 @@ var slider3 = new NiceSlider('#slider3', {offset: w * 0.2})</pre>
         <style>
         .autoplay {max-width: 600px; width: 100%; height: 300px; margin: 0 auto}
         .autoplay .slider-wrapper {width: 100%; height: 300px;}
-        #slider4 {font-size: 0; height: 300px;}
+        #slider4 {font-size: 0; height: 300px; position: absolute; width: 100%}
         .autoplay .slider-item {width: 100%; height: 300px; float: left; font-size: 20px; line-height: 300px; text-align: center}
         </style>
       </div>
@@ -159,7 +159,7 @@ var slider3 = new NiceSlider('#slider3', {offset: w * 0.2})</pre>
         <style>
         .label {max-width: 600px; width: 100%; height: 300px; margin: 0 auto}
         .label .slider-wrapper {width: 100%; height: 300px;}
-        #slider5 {font-size: 0; height: 300px;}
+        #slider5 {font-size: 0; height: 300px; position: absolute; width: 100%}
         .label .slider-item {width: 100%; height: 300px; float: left; font-size: 20px; line-height: 300px; text-align: center}
         .label .slider-steps {bottom: auto; top: -30px; height: 30px; text-align: left; padding: 0}
         .label .slider-steps .step {width: 30%; border-radius: 0; text-align: center; font-size: 14px; line-height: 30px; height: 30px; background: #159957; cursor: pointer; margin: 0; color: #fff; text-indent: 0;}
@@ -195,7 +195,7 @@ var slider5 = new NiceSlider('#slider5', {
         <style>
         .refresh {max-width: 600px; width: 100%; height: 300px; margin: 0 auto; position: relative}
         .refresh .slider-wrapper {width: 100%; height: 300px;}
-        #slider6 {font-size: 0; height: 300px;}
+        #slider6 {font-size: 0; height: 300px; position: absolute; width: 100%}
         .refresh .slider-item {width: 100%; height: 300px; float: left; font-size: 20px; line-height: 300px; text-align: center}
         .refresh .loading {display: none; position: absolute; top: 0; left: 0; width: 100%; height: 300px; line-height: 300px; text-align: center; background: rgba(255, 255, 255, 0.8); z-index: 10}
         </style>
@@ -235,6 +235,54 @@ var slider6 = new NiceSlider('#slider6', {
         loading.hide()
       }, 1000)
     }
+  }
+})</pre></div>
+      
+      <h3>用法7 - 嵌套滑动</h3>
+      
+      <div class="dom-unit">
+        <div class="block nesting">
+          <div id="slider7">
+            <div class="slider-item">slider item 1</div>
+            <div class="slider-item">slider item 2</div>
+            <div class="slider-item">
+              <div id="slider8">
+                <div class="slider-item">slider item 3</div>
+                <div class="slider-item">slider item 4</div>
+                <div class="slider-item">
+                   <div id="slider9">
+                    <div class="slider-item">slider item 5</div>
+                    <div class="slider-item">slider item 6</div>
+                    <div class="slider-item">END</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <style>
+        .nesting {max-width: 600px; width: 100%; height: 300px; margin: 0 auto}
+        .nesting .slider-wrapper {width: 100%; height: 300px;}
+        #slider7 {font-size: 0; height: 300px; position: absolute; width: 100%}
+        #slider8 {font-size: 0; height: 300px; position: absolute; width: 100%}
+        #slider9 {font-size: 0; height: 300px; position: absolute; width: 100%}
+        #slider7 .slider-wrapper {width: 100%;}
+        #slider8 .slider-wrapper {width: 100%;}
+        #slider9 .slider-wrapper {width: 100%;}
+        .nesting .slider-item {width: 100%; height: 300px; float: left; font-size: 20px; line-height: 300px; text-align: center}
+        </style>
+      </div>
+      <script>
+        var slider7 = new NiceSlider('#slider7', {ctrlBtn: false, indexBtn: false, unlimit: false})
+        var slider8 = new NiceSlider('#slider8', {dir: 'v', ctrlBtn: false, indexBtn: false, unlimit: false})
+        var slider9 = new NiceSlider('#slider9', {ctrlBtn: false, indexBtn: false, unlimit: false})
+      </script>
+      <div class="code-unit"><pre>
+var slider5 = new NiceSlider('#slider5', {
+  noAnimate: true, 
+  drag: false, 
+  indexFormat: function (i) {
+    return '标签' + (i + 1)
   }
 })</pre></div>
       
