@@ -347,6 +347,7 @@
     _dir = true,
     _distance = 0,
     _currentSlider = null,
+    _sliderArray = [],
     _bound = false,
     _sliderCount = 0
   
@@ -385,7 +386,7 @@
     _isChecked = false
     _dir = 0
     _distance = 0
-    _currentSlider = this
+    _sliderArray.push(this)
     if (this.timer) {clearTimeout(this.timer)}
   }
   
@@ -395,6 +396,7 @@
    * @param {Object} e
    */
   function _touchmove (e) {
+    _currentSlider = _sliderArray[0]
     if (_currentSlider && _currentSlider.cfg.drag) {
       if (_currentSlider.touched) {
         _currentPoint = _getXY(e)
@@ -421,6 +423,7 @@
       _setAutoPlay.apply(_currentSlider)
       _currentSlider.moveingDist = 0
       _currentSlider = null
+      _sliderArray = []
     }
   }
   
@@ -451,6 +454,10 @@
       if ((this.isVertical && Math.abs(deltaX) > Math.abs(deltaY))|| (!this.isVertical && Math.abs(deltaY) > Math.abs(deltaX))) {
         _locked = false
         this.touched = false
+        _sliderArray.shift()
+        if (_sliderArray.length) {
+          _isChecked = false
+        }
       } else {
         _locked = true
       }
