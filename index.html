@@ -243,17 +243,29 @@ var slider6 = new NiceSlider('#slider6', {
       <div class="dom-unit">
         <div class="block nesting">
           <div id="slider7">
-            <div class="slider-item">slider item 1</div>
-            <div class="slider-item">slider item 2</div>
+            <div class="slider-item"> 左右滑动 </div>
+            <div class="slider-item slider10-box">
+              <div id="slider10">
+                <div class="slider-item"> 上下滑动 1</div>
+                <div class="slider-item"> 上下滑动 2</div>
+                <div class="slider-item"> 上下滑动 3</div>
+              </div>
+            </div>
             <div class="slider-item">
               <div id="slider8">
-                <div class="slider-item">slider item 3</div>
-                <div class="slider-item">slider item 4</div>
+                <div class="slider-item"> 上下滑动 </div>
+                <div class="slider-item slider11-box">
+                  <div id="slider11">
+                    <div class="slider-item"> 左右滑动 1</div>
+                    <div class="slider-item"> 左右滑动 2</div>
+                    <div class="slider-item"> 左右滑动 3</div>
+                  </div>
+                </div>
                 <div class="slider-item">
-                   <div id="slider9">
-                    <div class="slider-item">slider item 5</div>
-                    <div class="slider-item">slider item 6</div>
-                    <div class="slider-item">END</div>
+                  <div id="slider9">
+                    <div class="slider-item"> 左右滑动 1</div>
+                    <div class="slider-item"> 左右滑动 2</div>
+                    <div class="slider-item"> 左右滑动 3</div>
                   </div>
                 </div>
               </div>
@@ -266,25 +278,29 @@ var slider6 = new NiceSlider('#slider6', {
         #slider7 {font-size: 0; height: 300px; position: absolute; width: 100%}
         #slider8 {font-size: 0; height: 300px; position: absolute; width: 100%}
         #slider9 {font-size: 0; height: 300px; position: absolute; width: 100%}
+        #slider10 {font-size: 0; height: 200px; position: absolute; width: 100%}
+        #slider11 {font-size: 0; height: 200px; position: absolute; width: 100%}
         #slider7 .slider-wrapper {width: 100%;}
         #slider8 .slider-wrapper {width: 100%;}
         #slider9 .slider-wrapper {width: 100%;}
+        #slider7 .slider10-box .slider-wrapper,
+        #slider7 .slider11-box .slider-wrapper {width: 80%; margin: 50px auto; height: 200px;}
         .nesting .slider-item {width: 100%; height: 300px; float: left; font-size: 20px; line-height: 300px; text-align: center}
+        #slider11 .slider-item,
+        #slider10 .slider-item {height: 200px; line-height: 200px;}
         </style>
       </div>
       <script>
         var slider7 = new NiceSlider('#slider7', {ctrlBtn: false, indexBtn: false, unlimit: false})
         var slider8 = new NiceSlider('#slider8', {dir: 'v', ctrlBtn: false, indexBtn: false, unlimit: false})
         var slider9 = new NiceSlider('#slider9', {ctrlBtn: false, indexBtn: false, unlimit: false})
+        var slider10 = new NiceSlider('#slider10', {dir: 'v', ctrlBtn: false, indexBtn: false, unlimit: false})
+        var slider11 = new NiceSlider('#slider11', {ctrlBtn: false, indexBtn: false, unlimit: false})
       </script>
       <div class="code-unit"><pre>
-var slider5 = new NiceSlider('#slider5', {
-  noAnimate: true, 
-  drag: false, 
-  indexFormat: function (i) {
-    return '标签' + (i + 1)
-  }
-})</pre></div>
+var slider7 = new NiceSlider('#slider7', {ctrlBtn: false, indexBtn: false, unlimit: false})
+var slider8 = new NiceSlider('#slider8', {dir: 'v', ctrlBtn: false, indexBtn: false, unlimit: false})
+var slider9 = new NiceSlider('#slider9', {ctrlBtn: false, indexBtn: false, unlimit: false})</pre></div>
       
       <hr />
       
