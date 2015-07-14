@@ -449,19 +449,20 @@
    */
   function _checkDir (deltaX, deltaY) {
     if (!_isChecked) {
-      _isChecked = true
-      
       if ((this.isVertical && Math.abs(deltaX) > Math.abs(deltaY))|| (!this.isVertical && Math.abs(deltaY) > Math.abs(deltaX))) {
         _locked = false
         this.touched = false
         _sliderArray.shift()
         if (_sliderArray.length) {
-          _isChecked = false
+          _currentPoint = _sliderArray[0]
+          _checkDir.call(_currentPoint, deltaX, deltaY)
         } else {
           this.touched = false
+          _isChecked = true
         }
       } else {
         _locked = true
+        _isChecked = true
       }
     }
   }
@@ -479,7 +480,7 @@
     //设置slider滑动方向
     _dir = delta > 0
     _distance = delta
-    _move.call(this, delta)
+    _move.call(_currentPoint, delta)
   }
   
   ///////////////drag相关
