@@ -448,22 +448,19 @@
    * @param {Number} deltaY
    */
   function _checkDir (deltaX, deltaY) {
-    if (!_isChecked) {
-      if ((this.isVertical && Math.abs(deltaX) > Math.abs(deltaY))|| (!this.isVertical && Math.abs(deltaY) > Math.abs(deltaX))) {
+    if ((this.isVertical && Math.abs(deltaX) > Math.abs(deltaY))|| (!this.isVertical && Math.abs(deltaY) > Math.abs(deltaX))) {
+      _sliderArray.shift()
+      if (_sliderArray.length) {
+        _currentPoint = _sliderArray[0]
+        _checkDir.call(_currentPoint, deltaX, deltaY)
+      } else {
         _locked = false
         this.touched = false
-        _sliderArray.shift()
-        if (_sliderArray.length) {
-          _currentPoint = _sliderArray[0]
-          _checkDir.call(_currentPoint, deltaX, deltaY)
-        } else {
-          this.touched = false
-          _isChecked = true
-        }
-      } else {
-        _locked = true
         _isChecked = true
       }
+    } else {
+      _locked = true
+      _isChecked = true
     }
   }
   
