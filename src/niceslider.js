@@ -15,9 +15,23 @@
     }
   
   //获取浏览器前缀
-  /*var _prefix = (function () {
+  var _prefix = (function () {
     var div = document.createElement('div'),
-      style = div.style
+      style = div.style,
+      arr = ['WebkitT', 'MozT', 'MsT'],
+      temp = '',
+      i = 0,
+      l = 3,
+      result = ''
+    for (i; i < l; i++) {
+      temp = arr[i]
+      if (typeof style[temp + 'ransform'] !== 'undefined') {
+        result = '-' + temp.replace('T', '').toLowerCase() + '-'
+        break
+      }
+    }
+    return result
+    
     if (style.webkitTransform) {
       return '-webkit-'
     } else if (style.mozTransform) {
@@ -27,7 +41,7 @@
     } else {
       return ''
     }
-  }())*/
+  }())
   
   /**
    * 配置项
@@ -93,12 +107,13 @@
     //Zepto在一些浏览器上设置translate3d无效
     //可手动开启硬件加速
     if (!isVertical) {
-      //d[_prefix + 'ransform'] = 'translate3d(' + dist + 'px, 0, 0)'
-      d.left = dist + 'px'
+      d[_prefix + 'transform'] = 'translate3d(' + dist + 'px, 0, 0)'
+      //d.left = dist + 'px'
     } else {
-      //d[_prefix + 'ransform'] = 'translate3d(0, ' + dist + 'px, 0)'
-      d.top = dist + 'px'
+      d[_prefix + 'transform'] = 'translate3d(0, ' + dist + 'px, 0)'
+      //d.top = dist + 'px'
     }
+    
     jDom.css(d)
   }
   
@@ -397,12 +412,14 @@
    */
   function _touchmove (e) {
     _currentSlider = _sliderArray[0]
-    if (_currentSlider && _currentSlider.cfg.drag) {
+    if (_currentSlider && _currentSlider.cfg.drag && !_currentSlider.checkLock()) {
       if (_currentSlider.touched) {
         _currentPoint = _getXY(e)
         _handleMove.call(_currentSlider, _currentSlider.isVertical ? (_currentPoint.y - _origin.y) : (_currentPoint.x - _origin.x))
         if (_locked) {e.preventDefault()}
       }
+    } else {
+      _sliderArray.shift()
     }
   }
   
@@ -579,7 +596,7 @@
    * @type {Function} 
    */
   function _getIndex () {
-    return this.currentIndex % l
+    return this.currentIndex % this.realLength
   }
   
   /**
@@ -822,18 +839,51 @@
   function NiceSlider (dom, cfg) {
     this.jBox = $(dom)
     this.cfg = _handleCfg(cfg || {})
+    
+    var _islocked = false
+    
+    /**
+     * 检查当前是否锁定
+     * @type {Function}
+     */
+    function _checkLock () {
+      return _islocked
+    }
+    
+    /**
+     * 设置当前为锁定状态
+     * @type {Function}
+     */
+    function _lock () {
+      _islocked = true
+    }
+    
+    /**
+     * 解锁
+     * @type {Function}
+     */
+    function _unlock () {
+      _islocked = false
+    }
+    
+    this.checkLock = _checkLock
+    this.lock = _lock
+    this.unlock = _unlock
+    
     _init.apply(this)
   }
   
-  NiceSlider.prototype = {
-    prev: _prev,
-    next: _next,
-    setIndexTo: _setIndexTo,
-    moveTo: _moveTo,
-    getIndex: _getIndex,
-    refresh: _refresh,
-    destroy: _destroy
-  }
+  NiceSlider.prototype = (function () {
+    return {
+      prev: _prev,
+      next: _next,
+      setIndexTo: _setIndexTo,
+      moveTo: _moveTo,
+      getIndex: _getIndex,
+      refresh: _refresh,
+      destroy: _destroy
+    }
+  }())
   
   if(typeof define === 'function' && define.amd) {
 		define([], function () {
