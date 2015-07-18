@@ -353,7 +353,25 @@ var slider11 = new NiceSlider('#slider11', {ctrlBtn: false, indexBtn: false, unl
           }
         })
       </script>
-      <div class="code-unit"><pre>var slider4 = new NiceSlider('#slider4', {autoPlay: true, duration: 1000})</pre></div>
+      <div class="code-unit"><pre>
+var slider12 = new NiceSlider('#slider12', {ctrlBtn: false, indexBtn: false, unlimit: false,
+  onChange: function () {
+    var idx = this.getIndex()
+    if (idx === 1) {
+      this.lock()
+      $('#s12').html('locked')
+    }
+  }
+})
+var slider13 = new NiceSlider('#slider13', {dir: 'v', ctrlBtn: false, indexBtn: false, unlimit: false,
+  onChange: function () {
+    var idx = this.getIndex()
+    if (idx === 2) {
+      slider12.unlock()
+      $('#s12').html('unlock')
+    }
+  }
+})</pre></div>
       
       <hr />
       
