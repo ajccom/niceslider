@@ -323,7 +323,7 @@
         this.jItems.height(height)
         box.height(height * items.length)
         this.boxHeight = Math.ceil(box.height() / multiple)
-        content.width(box.width())
+        content.width(box.width()).height(height)
         this.rangeHeight = this.boxHeight - this.jWrapper.height() + cfg.offset
         this.currentTop = cfg.index * this.itemHeight
       }
