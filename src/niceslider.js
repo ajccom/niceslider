@@ -31,16 +31,6 @@
       }
     }
     return result
-    
-    if (style.webkitTransform) {
-      return '-webkit-'
-    } else if (style.mozTransform) {
-      return '-moz-' 
-    } else if (style.msTransform) {
-      return '-ms-'
-    } else {
-      return ''
-    }
   }())
   
   /**
@@ -466,7 +456,6 @@
    */
   function _checkDir (deltaX, deltaY) {
     if ((this.isVertical && Math.abs(deltaX) > Math.abs(deltaY))|| (!this.isVertical && Math.abs(deltaY) > Math.abs(deltaX))) {
-      
       _sliderArray.shift()
       if (_sliderArray.length) {
         _currentSlider = _sliderArray[0]
@@ -494,6 +483,14 @@
     }
     //设置slider滑动方向
     _dir = delta > 0
+    
+    if (_dir && this.checkLockPrev()) {
+      delta = 0
+    }
+    if (!_dir && this.checkLockNext()) {
+      delta = 0
+    }
+    
     _distance = delta
     _move.call(this, delta)
   }
@@ -720,6 +717,8 @@
    */
   function _prev () {
     var idx = this.currentIndex - 1
+    var isLocked = this.checkLock() || this.checkLockPrev()
+    if (isLocked) {return}
     if (this.cfg.unlimit) {
       this.moveTo(idx)
     } else {
@@ -734,6 +733,8 @@
    */
   function _next () {
     var idx = this.currentIndex + 1
+    var isLocked = this.checkLock() || this.checkLockNext()
+    if (isLocked) {return}
     if (this.cfg.unlimit) {
       this.moveTo(idx)
     } else {
@@ -869,7 +870,67 @@
     this.lock = _lock
     this.unlock = _unlock
     
+    //锁定单方向
+    var _isLockPrev = false,
+      _isLockNext = false
+      
+    /**
+     * 是否锁定前一项
+     * @type {Function}
+     */
+    function _checkLockPrev () {
+      return _isLockPrev
+    }
+    
+    /**
+     * 是否锁定后一项
+     * @type {Function}
+     */
+    function _checkLockNext () {
+      return _isLockNext
+    }
+    
+    /**
+     * 锁定前一项
+     * @type {Function}
+     */
+    function _lockPrev () {
+      _isLockPrev = true
+    }
+    
+    /**
+     * 解锁前一项
+     * @type {Function}
+     */
+    function _unlockPrev () {
+      _isLockPrev = false
+    }
+    
+    /**
+     * 锁定后一项
+     * @type {Function}
+     */
+    function _lockNext () {
+      _isLockNext = true
+    }
+    
+    /**
+     * 解锁后一项
+     * @type {Function}
+     */
+    function _unlockNext () {
+      _isLockNext = false
+    }
+    
+    this.checkLockPrev = _checkLockPrev
+    this.lockPrev = _lockPrev
+    this.unlockPrev = _unlockPrev
+    this.checkLockNext = _checkLockNext
+    this.lockNext = _lockNext
+    this.unlockNext = _unlockNext
+    
     _init.apply(this)
+    return this
   }
   
   NiceSlider.prototype = (function () {

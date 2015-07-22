@@ -10,7 +10,8 @@
 - 自带控制按钮与索引值；
 - 自定义索引值；
 - 支持多slider嵌套；
-- 手势滑动锁定；
+- 双向滑动锁定；
+- 单向滑动锁定；
 - 自定义偏移值；
 - 支持无缝循环；
 - 支持重置刷新；
@@ -21,7 +22,7 @@
 
 使用NiceSlider的优势：
 
-- 体积小，压缩后(开启gzip)文件大小只有3.2K；
+- 体积小，压缩后(开启gzip)文件大小只有3.5K；
 - 配置丰富，能满足大多数slider需求；
 - 完美支持桌面与移动端。
 
@@ -76,9 +77,15 @@ next | - | 滑向后一项
 setIndexTo | index | 立即定位至某项，不推荐使用，建议用moveTo替代
 moveTo | index, isImmediate | 滑动至某项, 第二个参数决定是否跳过动画，立即定位
 getIndex | - | 获取组件当前的索引
-checkLock | - | 获取组件手势锁定状态
-lock | - | 锁定组件，锁定的组件将无法通过手势拖拽滑动
+checkLock | - | 获取组件双向锁定状态
+lock | - | 锁定组件，锁定的组件将无法双向滑动
 unlock | - | 解锁组件
+checkLockPrev | - | 获取组件往前锁定状态
+lockPrev | - | 锁定组件后将无法往前滑动
+unlockPrev | - | 解锁组件
+checkLockNext | - | 获取组件往后锁定状态
+lockNext | - | 锁定组件后将无法往后滑动
+unlockNext | - | 解锁组件
 refresh | config | 刷新组件，可以重新设定配置项
 destroy | - | 销毁组件
 
