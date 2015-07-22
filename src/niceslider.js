@@ -861,6 +861,7 @@
      */
     function _lock () {
       _islocked = true
+      return this
     }
     
     /**
@@ -869,6 +870,7 @@
      */
     function _unlock () {
       _islocked = false
+      return this
     }
     
     this.checkLock = _checkLock
@@ -901,6 +903,7 @@
      */
     function _lockPrev () {
       _isLockPrev = true
+      return this
     }
     
     /**
@@ -909,6 +912,7 @@
      */
     function _unlockPrev () {
       _isLockPrev = false
+      return this
     }
     
     /**
@@ -917,6 +921,7 @@
      */
     function _lockNext () {
       _isLockNext = true
+      return this
     }
     
     /**
@@ -925,6 +930,7 @@
      */
     function _unlockNext () {
       _isLockNext = false
+      return this
     }
     
     this.checkLockPrev = _checkLockPrev
