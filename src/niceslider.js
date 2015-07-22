@@ -689,6 +689,7 @@
     if (this.jSteps) {_toggleStepTo.apply(this)}
     if (this.cfg.ctrlBtn) {_checkCtrlBtn.apply(this)}
     _setAutoPlay.apply(this)
+    return this
   }
   
   /**
@@ -709,6 +710,7 @@
     _setDist(this.jBox, dist, isVertical)
     this.currentIndex = idx
     this[isVertical ? 'currentTop' : 'currentLeft'] = dist
+    return this
   }
   
   /**
@@ -725,6 +727,7 @@
       if (idx < 0) {return}
       this.moveTo(idx)
     }
+    return this
   }
   
   /**
@@ -741,6 +744,7 @@
       if (idx >= this.realLength) {return}
       this.moveTo(idx)
     }
+    return this
   }
   
   /**
@@ -758,6 +762,7 @@
     if (this.timer) {clearTimeout(this.timer)}
     _sliderCount--
     _init.apply(this)
+    return this
   }
   
   /**
@@ -856,6 +861,7 @@
      */
     function _lock () {
       _islocked = true
+      return this
     }
     
     /**
@@ -864,6 +870,7 @@
      */
     function _unlock () {
       _islocked = false
+      return this
     }
     
     this.checkLock = _checkLock
@@ -896,6 +903,7 @@
      */
     function _lockPrev () {
       _isLockPrev = true
+      return this
     }
     
     /**
@@ -904,6 +912,7 @@
      */
     function _unlockPrev () {
       _isLockPrev = false
+      return this
     }
     
     /**
@@ -912,6 +921,7 @@
      */
     function _lockNext () {
       _isLockNext = true
+      return this
     }
     
     /**
@@ -920,6 +930,7 @@
      */
     function _unlockNext () {
       _isLockNext = false
+      return this
     }
     
     this.checkLockPrev = _checkLockPrev
