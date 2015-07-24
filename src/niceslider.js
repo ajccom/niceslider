@@ -39,6 +39,7 @@
    * @param {Boolean} ctrlBtn 是否加上左右控制按钮
    * @param {Boolean} indexBtn 是否加上序列标签
    * @param {Function} indexFormat indxBtn为true的情况下，序列标签内容的format函数。返回值将被插入标签元素中
+   * @param {Number} unit 滑动个数（默认1，设0表示按屏滚动）
    * @param {Number} offset 偏移值
    * @param {Number} index 初始项序号
    * @param {String} dir 移动方向
@@ -64,6 +65,7 @@
       }
     }
     */
+    unit: 1,
     offset: 0,
     index: 0,
     dir: 'h',
@@ -225,11 +227,13 @@
   function _createSteps () {
     var i = 0,
       items = this.jItems,
-      l = items.length,
+      l = this.stepLength,
       html = '<ol class="slider-steps">',
       indexFormat = this.cfg.indexFormat,
       that = this,
-      steps = null
+      steps = null,
+      cfg = this.cfg
+    
     for (i; i < l; i++) {
       html += '<li class="step">' + (indexFormat ? indexFormat.call(that, i) : i) + '</li>'
     }
@@ -237,7 +241,9 @@
     this.jWrapper.append(html)
     if (this.cfg.indexBind) {
       steps = this.jWrapper.find('.slider-steps').on(ev.click, '.step', function () {
-        var index = steps.find('.step').index($(this))
+        var s = $(this), index
+        if (s.hasClass('disable')) {return}
+        index = steps.find('.step').index(s)
         that.moveTo(index)
       })
     } else {
@@ -260,7 +266,8 @@
       width = 0,
       height = 0,
       multiple = 1,
-      isVertical = cfg.dir === 'h' ? false : true
+      isVertical = cfg.dir === 'h' ? false : true,
+      rangeWidth, rangeHeight, realLength
     
     this.isVertical = isVertical
     
@@ -283,9 +290,10 @@
       this.jCtrl = this.jWrapper.find('.slider-control')
     }
     if (items.length > 1) {
-      if (cfg.indexBtn) {
-        _createSteps.apply(this)
-      }
+      //Zepto对象没有outWidth方法，降级使用width
+      width = items.width()
+      height = items.height()
+      
       if (cfg.unlimit) {
         box.append(items.clone())
         multiple = 2
@@ -298,36 +306,47 @@
         this.jItems = items = box.children()
       }
       this.multiple = multiple
-      this.realLength = items.length / multiple
-      //Zepto对象没有outWidth方法，降级使用width
-      this.itemWidth = width = items.width()
-      this.itemHeight = height = items.height()
+      realLength = items.length / multiple
+      
       if (!isVertical) {
         this.jItems.width(width)
         box.width(width * items.length)
         this.boxWidth = Math.ceil(box.width() / multiple)
         content.height(box.height())
-        this.rangeWidth = this.boxWidth - this.jWrapper.width() + cfg.offset
-        this.currentLeft = cfg.index * this.itemWidth
+        rangeWidth = this.boxWidth - this.jWrapper.width() + cfg.offset
+        this.currentLeft = cfg.index * width
       } else {
         this.jItems.height(height)
         box.height(height * items.length)
         this.boxHeight = Math.ceil(box.height() / multiple)
         content.width(box.width()).height(height)
-        this.rangeHeight = this.boxHeight - this.jWrapper.height() + cfg.offset
-        this.currentTop = cfg.index * this.itemHeight
+        rangeHeight = this.boxHeight - this.jWrapper.height() + cfg.offset
+        this.currentTop = cfg.index * height
+      }
+      this.wrapperSize = isVertical ? wrapper.height() : wrapper.width()
+      this.itemSize = isVertical ? height : width
+      this.moveUnit = cfg.unit > 0 ? this.itemSize * cfg.unit : this.wrapperSize
+      this.scope = isVertical ? rangeHeight : rangeWidth
+      this.stepLength = cfg.unit > 0 ? Math.round(this.scope / this.moveUnit + 1) : Math.round(this.itemSize * realLength / this.wrapperSize)
+      if (cfg.indexBtn) {
+        _createSteps.apply(this)
       }
       this.moveTo(cfg.index, true)
     } else {
       this.multiple = 1
-      this.itemWidth = width = items.width()
-      this.itemHeight = height = items.height()
-      this.realLength = 1
+      width = items.width()
+      height = items.height()
+      realLength = 1
+      this.wrapperSize = isVertical ? wrapper.height() : wrapper.width()
+      this.itemSize = isVertical ? height : width
+      this.moveUnit = 0
+      this.scope = 0
+      this.stepLength = 1
       if (!isVertical) {
         box.width(width)
         content.height(box.height())
         this.boxWidth = width
-        this.rangeWidth = 0
+        rangeWidth = 0
         wrapper.addClass('slider-no-effect')
         this.currentLeft = 0
         this.moveTo(0, true)
@@ -335,13 +354,12 @@
         box.height(height)
         content.width(box.width())
         this.boxHeight = height
-        this.rangeHeight = 0
+        rangeHeight = 0
         wrapper.addClass('slider-no-effect')
         this.currentTop = 0
         this.moveTo(0, true)
       }
     }
-    
   }
   
   ////////////////////////darg相关
@@ -505,7 +523,7 @@
   function _move (dist) {
     var isVertical = this.isVertical,
       origin = isVertical ? this.currentTop : this.currentLeft,
-      range = isVertical ? this.rangeHeight : this.rangeWidth
+      range = this.scope
     var dist = origin + dist
     if (!this.cfg.bounce && !this.cfg.unlimit) {
       dist = Math.min(0, Math.max(dist, -1 * range))
@@ -521,9 +539,9 @@
   function _checkIndex () {
     var isVertical = this.isVertical,
       idx = this.currentIndex,
-      unitDist = isVertical ? this.itemHeight : this.itemWidth,
+      unitDist = this.moveUnit,
       l = this.jItems.length,
-      rl = this.realLength,
+      rl = this.stepLength,
       d = Math.abs(_distance),
       deltaIndex = 0
     //未触发滑动事件 _dir是0 不是boolean值
@@ -537,7 +555,7 @@
         deltaIndex = (_dir ? -1 : 1) * Math.ceil(d / unitDist)
       }
       idx = idx + deltaIndex
-      idx = Math.max(0, Math.min(idx, this.realLength - 1))
+      idx = Math.max(0, Math.min(idx, this.stepLength - 1))
       this.moveTo(idx)
     }
   }
@@ -549,7 +567,7 @@
   function _checkCtrlBtn () {
     var idx = this.currentIndex,
       cfg = this.cfg,
-      l = this.realLength,
+      l = this.stepLength,
       pb = this.jPrevBtn,
       nb = this.jNextBtn
     
@@ -580,7 +598,7 @@
   function _toggleStepTo () {
     var idx = this.currentIndex,
       cfg = this.cfg,
-      l = this.realLength,
+      l = this.stepLength,
       pb = this.jPrevBtn,
       nb = this.jNextBtn
      
@@ -592,7 +610,7 @@
    * @type {Function} 
    */
   function _getIndex () {
-    return this.currentIndex % this.realLength
+    return this.currentIndex % this.stepLength
   }
   
   /**
@@ -611,7 +629,7 @@
         if (that.cfg.unlimit) {
           that.moveTo(idx)
         } else {
-          idx = idx % that.realLength
+          idx = idx % that.stepLength
           that.moveTo(idx)
         }
         
@@ -628,8 +646,8 @@
     var idx, rl, l
     if (this.cfg.unlimit && !this.touched) {
       idx = this.currentIndex
-      rl = this.realLength
-      l = this.jItems.length
+      rl = this.stepLength
+      l = Math.ceil(this.jItems.length * this.itemSize / this.moveUnit)
       if (rl > 1) {
         if (idx <= 1) {
           idx = rl + 1
@@ -651,11 +669,11 @@
   function _moveTo (idx, isImmediate) {
     var isVertical = this.isVertical,
       l = this.jItems.length,
-      unitDist = isVertical ? this.itemHeight : this.itemWidth,
-      range = isVertical ? this.rangeHeight : this.rangeWidth,
+      unitDist = this.moveUnit,
+      range = this.scope,
       offset = this.cfg.offset,
       multiple = this.multiple,
-      rl = this.realLength,
+      rl = this.stepLength,
       dist = 0,
       that = this
     
@@ -700,12 +718,11 @@
   function _setIndexTo (idx) {
     var isVertical = this.isVertical,
       wrapper = this.jWrapper,
-      l = this.jItems.length,
-      unitDist = isVertical ? this.itemHeight : this.itemWidth,
+      l = this.stepLength,
+      unitDist = this.moveUnit,
       offset = this.cfg.offset,
       dist = 0
     if (idx.toString() === 'NaN') {return}
-    idx = parseInt(idx, 10) % l
     dist = -1 * idx * unitDist + offset
     _setDist(this.jBox, dist, isVertical)
     this.currentIndex = idx
@@ -741,7 +758,7 @@
     if (this.cfg.unlimit) {
       this.moveTo(idx)
     } else {
-      if (idx >= this.realLength) {return}
+      if (idx >= this.stepLength) {return}
       this.moveTo(idx)
     }
     return this
@@ -770,7 +787,7 @@
    * @type {Function} 
    */
   function _resetItems () {
-    var l = this.realLength - 1
+    var l = this.stepLength - 1
     this.jItems.each(function (i, o) {
       if (i > l) {$(o).remove()}
     })
