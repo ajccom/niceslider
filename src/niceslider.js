@@ -19,13 +19,13 @@
     var div = document.createElement('div'),
       style = div.style,
       arr = ['WebkitT', 'MozT', 'MsT'],
-      temp = '',
+      temp,
       i = 0,
       l = 3,
-      result = ''
+      result
     for (i; i < l; i++) {
       temp = arr[i]
-      if (typeof style[temp + 'ransform'] !== 'undefined') {
+      if (style[temp + 'ransform'] === '') {
         result = '-' + temp.replace('T', '').toLowerCase() + '-'
         break
       }
@@ -96,16 +96,11 @@
    */
   function _setDist (jDom, dist, isVertical) {
     var d = {}
-    //Zepto在一些浏览器上设置translate3d无效
-    //可手动开启硬件加速
     if (!isVertical) {
       d[_prefix + 'transform'] = 'translate3d(' + dist + 'px, 0, 0)'
-      //d.left = dist + 'px'
     } else {
       d[_prefix + 'transform'] = 'translate3d(0, ' + dist + 'px, 0)'
-      //d.top = dist + 'px'
     }
-    
     jDom.css(d)
   }
   
@@ -136,6 +131,26 @@
   }
   
   /**
+   * 使用requestAnimationFrame替代setTimeout/setInterval
+   * @param {Object} obj 新增函数
+   */
+  function _rAF (fn) {
+    return (window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    setTimeout)(fn)
+  }
+  
+  function _cAF (id) {
+    return (window.cancelAnimationFrame ||
+    window.webkitCancelAnimationFrame ||
+    window.mozCancelAnimationFrame ||
+    window.oCancelAnimationFrame ||
+    clearTimeout)(id)
+  }
+  
+  /**
    * 动画函数
    * @param {Object} args
    */
@@ -146,35 +161,36 @@
       time = args.time,
       distence = end - start,
       current = start,
-      //speed = distence / (time || 300),
-      smoothNumber = 10,
-      //unitDistence = speed * smoothNumber,
+      startTime = +new Date,
       pastTime = 0,
       isVertical = this.isVertical,
       that = this
-    if (this._aniTimer) {clearInterval(this._aniTimer)}
-    //_animating暂时没有作用
+    if (this._aniTimer) {_cAF(this._aniTimer)}
+    
+    function _step () {
+      that._aniTimer = _rAF(function () {
+        pastTime = +new Date - startTime
+        current = (_animationFunction[that.cfg.animation] || _animationFunction.linear)(pastTime, start, distence, time)
+        _setDist(jDom, current, isVertical)
+        
+        //设置一下组件当前的位移值，方便手势操作时使用
+        //that.moveDist = current
+        
+        if (pastTime >= time) {
+          _cAF(that._aniTimer)
+          _setDist(jDom, end, isVertical)
+          args.cb && args.cb.apply(that)
+          that._animating = false
+          that.cfg.onChange && that.cfg.onChange.apply(that)
+        } else {
+          _step()
+        }
+      })
+    }
+    
     this._animating = true
-    this._aniTimer = setInterval(function () {
-      if (_animationFunction[that.cfg.animation]) {
-        current = _animationFunction[that.cfg.animation](pastTime, start, distence, time)
-      } else {
-        current = _animationFunction.linear(pastTime, start, distence, time)
-      }
-      _setDist(jDom, current, isVertical)
-      
-      //设置一下组件当前的位移值，方便手势操作时使用
-      this.moveingDist = current
-      
-      pastTime += smoothNumber
-      if (pastTime >= time) {
-        clearInterval(that._aniTimer)
-        _setDist(jDom, end, isVertical)
-        args.cb && args.cb.apply(that)
-        that._animating = false
-        that.cfg.onChange && that.cfg.onChange.apply(that)
-      }
-    }, smoothNumber)
+    _step()
+    
   }
   
   /**
@@ -210,14 +226,12 @@
    */
   function _bindCtrlBtn (prevBtn, nextBtn) {
     var that = this
-    prevBtn.on(ev.click, function () {
+    this.jPrevBtn = prevBtn.on(ev.click, function () {
       that.prev()
     })
-    nextBtn.on(ev.click, function () {
+    this.jNextBtn = nextBtn.on(ev.click, function () {
       that.next()
     })
-    this.jPrevBtn = prevBtn
-    this.jNextBtn = nextBtn
   }
   
   /**
@@ -260,11 +274,11 @@
     var html = '<div class="slider-wrapper"><div class="slider-content"></div></div>',
       cfg = this.cfg,
       box = this.jBox,
-      items = null,
-      wrapper = null,
-      content = null,
-      width = 0,
-      height = 0,
+      items,
+      wrapper,
+      content,
+      width,
+      height,
       multiple = 1,
       isVertical = cfg.dir === 'h' ? false : true,
       rangeWidth, rangeHeight, realLength
@@ -314,14 +328,14 @@
         this.boxWidth = Math.ceil(box.width() / multiple)
         content.height(box.height())
         rangeWidth = this.boxWidth - this.jWrapper.width() + cfg.offset
-        this.currentLeft = cfg.index * width
+        this.currentDist = cfg.index * width
       } else {
         this.jItems.height(height)
         box.height(height * items.length)
         this.boxHeight = Math.ceil(box.height() / multiple)
         content.width(box.width()).height(height)
         rangeHeight = this.boxHeight - this.jWrapper.height() + cfg.offset
-        this.currentTop = cfg.index * height
+        this.currentDist = cfg.index * height
       }
       this.wrapperSize = isVertical ? wrapper.height() : wrapper.width()
       this.itemSize = isVertical ? height : width
@@ -348,7 +362,7 @@
         this.boxWidth = width
         rangeWidth = 0
         wrapper.addClass('slider-no-effect')
-        this.currentLeft = 0
+        this.currentDist = 0
         this.moveTo(0, true)
       } else {
         box.height(height)
@@ -356,7 +370,7 @@
         this.boxHeight = height
         rangeHeight = 0
         wrapper.addClass('slider-no-effect')
-        this.currentTop = 0
+        this.currentDist = 0
         this.moveTo(0, true)
       }
     }
@@ -383,8 +397,8 @@
   var _getXY = function (e) {
     var e = e.originalEvent ? e.originalEvent : e,
       touches = e.touches,
-      x = 0,
-      y = 0
+      x,
+      y
     if (touches) {
       x = touches[0].pageX
       y = touches[0].pageY
@@ -446,23 +460,9 @@
         _locked = false
       }
       _setAutoPlay.apply(_currentSlider)
-      _currentSlider.moveingDist = 0
+      _currentSlider.moveDist = 0
       _currentSlider = null
       _sliderArray = []
-    }
-  }
-  
-  /**
-   * 处理滚动
-   * @type {Function} 
-   * @param {Object} e
-   */
-  function _handleScroll (e) {
-    if (_currentSlider) {
-      _currentSlider.touched = false
-      _origin = {}
-      _currentPoint = {}
-      _locked = false
     }
   }
   
@@ -522,14 +522,14 @@
    */
   function _move (dist) {
     var isVertical = this.isVertical,
-      origin = isVertical ? this.currentTop : this.currentLeft,
+      origin = this.currentDist,
       range = this.scope
     var dist = origin + dist
     if (!this.cfg.bounce && !this.cfg.unlimit) {
       dist = Math.min(0, Math.max(dist, -1 * range))
     }
     _setDist(this.jBox, dist, isVertical)
-    this.moveingDist = dist
+    this.moveDist = dist
   }
   
   /**
@@ -697,12 +697,12 @@
     }
     
     if (!isImmediate && !this.cfg.noAnimate) {
-      _setAnimate.call(this, this.touched ? this.moveingDist : (isVertical ? this.currentTop : this.currentLeft), dist)
+      _setAnimate.call(this, this.touched ? this.moveDist : this.currentDist, dist)
     } else {
       _setAnimate.call(this, dist, dist, 0)
     }
     this.currentIndex = idx
-    this[isVertical ? 'currentTop' : 'currentLeft'] = dist
+    this.currentDist = dist
     
     if (this.jSteps) {_toggleStepTo.apply(this)}
     if (this.cfg.ctrlBtn) {_checkCtrlBtn.apply(this)}
@@ -721,12 +721,12 @@
       l = this.stepLength,
       unitDist = this.moveUnit,
       offset = this.cfg.offset,
-      dist = 0
+      dist
     if (idx.toString() === 'NaN') {return}
     dist = -1 * idx * unitDist + offset
     _setDist(this.jBox, dist, isVertical)
     this.currentIndex = idx
-    this[isVertical ? 'currentTop' : 'currentLeft'] = dist
+    this.currentDist = dist
     return this
   }
   
@@ -819,12 +819,8 @@
   function _bind () {
     var that = this
     this.jContent.on(ev.start, function (e) {_touchstart.call(that, e)})
-    //this.jBox.on(ev.move, function (e) {
-      //if (_locked) {e.preventDefault()}
-    //})
     if (!_bound) {
       $(document).on(ev.move, _touchmove).on(ev.end, _touchend)
-      //$(window).on('scroll', _handleScroll)
       _bound = true
     }
   }
@@ -835,7 +831,6 @@
    */
   function _unbind () {
     $(document).off(ev.move, _touchmove).off(ev.end, _touchend)
-    //$(window).off('scroll', _handleScroll)
     _bound = false
   }
   
