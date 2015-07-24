@@ -204,7 +204,6 @@ var slider5 = new NiceSlider('#slider5', {
         var slider6 = new NiceSlider('#slider6', {unlimit: false, ctrlBtn: false, indexBtn: false, dir: 'v',
           onChange: function () {
             var idx = this.getIndex()
-            console.log(this.stepLength - 1)
             if (idx === this.stepLength - 1) {
               loading.show()
               this.jBox.append('<div class="slider-item"> slider item ' + (this.stepLength + 1) + '</div>')
