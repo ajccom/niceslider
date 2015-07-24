@@ -1,6 +1,17 @@
-# NiceSlider 1.0.0
+# NiceSlider 1.0.1
+
+### 新增
+
+- carousel 功能
+- `niceSlider.stepLength` 获取可滑动长度
+
+### 删除
+
+- `niceSlider.realLength` 
 
 -----------------------
+
+# NiceSlider 1.0.0
 
 ### 特征：
 

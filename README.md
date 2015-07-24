@@ -19,11 +19,12 @@
 - 支持回弹；
 - 自动播放；
 - 手势拖拽；
-- 链式调用。
+- 链式调用；
+- carousel多块滑动。
 
 使用NiceSlider的优势：
 
-- 体积小，压缩后(开启gzip)文件大小只有3.5K；
+- 体积小，压缩后(开启gzip)文件大小只有3.2K；
 - 配置丰富，能满足大多数slider需求；
 - 完美支持桌面与移动端。
 
@@ -57,6 +58,7 @@ unlimit | Boolean | true | 是否实现无缝循环
 ctrlBtn | Boolean | true | 是否加上左右控制按钮
 indexBtn | Boolean | true | 是否加上索引元素
 indexFormat | Function | - | 自定义索引元素内容
+unit | Number | 1 | 设置单次滑动子项个数，设0则滑动一屏幕
 offset | Number | 0 | 偏移值
 index | Number | 0 | 初始显示序号
 dir | String | 'h' | 滑动方向
