@@ -135,19 +135,19 @@
    * @param {Object} obj 新增函数
    */
   function _rAF (fn) {
-    return (window.requestAnimationFrame ||
+    var a = (window.requestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
     window.mozRequestAnimationFrame ||
-    window.oRequestAnimationFrame ||
     setTimeout)(fn)
+    return a
   }
   
   function _cAF (id) {
-    return (window.cancelAnimationFrame ||
+    (window.cancelAnimationFrame ||
     window.webkitCancelAnimationFrame ||
     window.mozCancelAnimationFrame ||
-    window.oCancelAnimationFrame ||
     clearTimeout)(id)
+    return null
   }
   
   /**
@@ -165,10 +165,10 @@
       pastTime = 0,
       isVertical = this.isVertical,
       that = this
-    if (this._aniTimer) {_cAF(this._aniTimer)}
+    if (this._at) {_cAF(this._at)}
     
     function _step () {
-      that._aniTimer = _rAF(function () {
+      that._at = _rAF(function () {
         pastTime = +new Date - startTime
         current = (_animationFunction[that.cfg.animation] || _animationFunction.linear)(pastTime, start, distence, time)
         _setDist(jDom, current, isVertical)
@@ -177,10 +177,10 @@
         //that.moveDist = current
         
         if (pastTime >= time) {
-          _cAF(that._aniTimer)
+          _cAF(that._at)
           _setDist(jDom, end, isVertical)
           args.cb && args.cb.apply(that)
-          that._animating = false
+          that._isAni = false
           that.cfg.onChange && that.cfg.onChange.apply(that)
         } else {
           _step()
@@ -188,7 +188,7 @@
       })
     }
     
-    this._animating = true
+    this._isAni = true
     _step()
     
   }
@@ -198,7 +198,7 @@
    * @type {Function}
    */
   function _cancelAnimate () {
-    if (this._animating) {clearInterval(this._aniTimer); this._animating = false; _resetIndex.apply(this)}
+    if (this._isAni) {clearInterval(this._at); this._isAni = false; _resetIndex.apply(this)}
   }
   
   /**
@@ -226,10 +226,10 @@
    */
   function _bindCtrlBtn (prevBtn, nextBtn) {
     var that = this
-    this.jPrevBtn = prevBtn.on(ev.click, function () {
+    this.jPrev = prevBtn.on(ev.click, function () {
       that.prev()
     })
-    this.jNextBtn = nextBtn.on(ev.click, function () {
+    this.jNext = nextBtn.on(ev.click, function () {
       that.next()
     })
   }
@@ -240,7 +240,7 @@
    */
   function _createSteps () {
     var i = 0,
-      items = this.jItems,
+      items = this.jItem,
       l = this.stepLength,
       html = '<ol class="slider-steps">',
       indexFormat = this.cfg.indexFormat,
@@ -252,16 +252,16 @@
       html += '<li class="step">' + (indexFormat ? indexFormat.call(that, i) : i) + '</li>'
     }
     html += '</ol>'
-    this.jWrapper.append(html)
+    this.jWrap.append(html)
     if (this.cfg.indexBind) {
-      steps = this.jWrapper.find('.slider-steps').on(ev.click, '.step', function () {
+      steps = this.jWrap.find('.slider-steps').on(ev.click, '.step', function () {
         var s = $(this), index
         if (s.hasClass('disable')) {return}
         index = steps.find('.step').index(s)
         that.moveTo(index)
       })
     } else {
-      steps = this.jWrapper.find('.slider-steps')
+      steps = this.jWrap.find('.slider-steps')
     }
     this.jSteps = steps
   }
@@ -281,27 +281,27 @@
       height,
       multiple = 1,
       isVertical = cfg.dir === 'h' ? false : true,
-      rangeWidth, rangeHeight, realLength
+      rangeWidth, rangeHeight, realLength, size
     
     this.isVertical = isVertical
     
     //处理refresh情况
-    if (this.jWrapper) {
+    if (this.jWrap) {
       var div = $('<div></div>')
       div.append(box)
-      this.jWrapper.after(box)
-      this.jWrapper.remove()
-      delete this.jWrapper
+      this.jWrap.after(box)
+      this.jWrap.remove()
+      delete this.jWrap
     }
     
     box.wrap(html)
-    this.jWrapper = wrapper = box.closest('.slider-wrapper')
-    this.jItems = items = box.children()
+    this.jWrap = wrapper = box.closest('.slider-wrapper')
+    this.jItem = items = box.children()
     this.jContent = content = wrapper.find('.slider-content')
     if (cfg.ctrlBtn) {
       wrapper.append('<div class="slider-control"><span class="prev"><span class="prev-s"></span></span><span class="next"><span class="next-s"></span></span></div>')
       _bindCtrlBtn.call(this, wrapper.find('.prev'), wrapper.find('.next'))
-      this.jCtrl = this.jWrapper.find('.slider-control')
+      this.jCtrl = this.jWrap.find('.slider-control')
     }
     if (items.length > 1) {
       //Zepto对象没有outWidth方法，降级使用width
@@ -317,25 +317,24 @@
         }
       
         //重新获取slider item
-        this.jItems = items = box.children()
+        this.jItem = items = box.children()
       }
-      this.multiple = multiple
       realLength = items.length / multiple
       
       if (!isVertical) {
-        this.jItems.width(width)
+        this.jItem.width(width)
         box.width(width * items.length)
-        this.boxWidth = Math.ceil(box.width() / multiple)
+        size = Math.ceil(width * items.length / multiple)
         content.height(box.height())
-        rangeWidth = this.boxWidth - this.jWrapper.width() + cfg.offset
-        this.currentDist = cfg.index * width
+        rangeWidth = size - this.jWrap.width() + cfg.offset
+        this.current = cfg.index * width
       } else {
-        this.jItems.height(height)
+        this.jItem.height(height)
         box.height(height * items.length)
-        this.boxHeight = Math.ceil(box.height() / multiple)
+        size = Math.ceil(height * items.length / multiple)
         content.width(box.width()).height(height)
-        rangeHeight = this.boxHeight - this.jWrapper.height() + cfg.offset
-        this.currentDist = cfg.index * height
+        rangeHeight = size - this.jWrap.height() + cfg.offset
+        this.current = cfg.index * height
       }
       this.wrapperSize = isVertical ? wrapper.height() : wrapper.width()
       this.itemSize = isVertical ? height : width
@@ -347,7 +346,6 @@
       }
       this.moveTo(cfg.index, true)
     } else {
-      this.multiple = 1
       width = items.width()
       height = items.height()
       realLength = 1
@@ -359,18 +357,16 @@
       if (!isVertical) {
         box.width(width)
         content.height(box.height())
-        this.boxWidth = width
         rangeWidth = 0
         wrapper.addClass('slider-no-effect')
-        this.currentDist = 0
+        this.current = 0
         this.moveTo(0, true)
       } else {
         box.height(height)
         content.width(box.width())
-        this.boxHeight = height
         rangeHeight = 0
         wrapper.addClass('slider-no-effect')
-        this.currentDist = 0
+        this.current = 0
         this.moveTo(0, true)
       }
     }
@@ -522,7 +518,7 @@
    */
   function _move (dist) {
     var isVertical = this.isVertical,
-      origin = this.currentDist,
+      origin = this.current,
       range = this.scope
     var dist = origin + dist
     if (!this.cfg.bounce && !this.cfg.unlimit) {
@@ -540,7 +536,7 @@
     var isVertical = this.isVertical,
       idx = this.currentIndex,
       unitDist = this.moveUnit,
-      l = this.jItems.length,
+      l = this.jItem.length,
       rl = this.stepLength,
       d = Math.abs(_distance),
       deltaIndex = 0
@@ -568,8 +564,8 @@
     var idx = this.currentIndex,
       cfg = this.cfg,
       l = this.stepLength,
-      pb = this.jPrevBtn,
-      nb = this.jNextBtn
+      pb = this.jPrev,
+      nb = this.jNext
     
     if (!cfg.unlimit) { 
       //检查控制按钮状态
@@ -599,8 +595,8 @@
     var idx = this.currentIndex,
       cfg = this.cfg,
       l = this.stepLength,
-      pb = this.jPrevBtn,
-      nb = this.jNextBtn
+      pb = this.jPrev,
+      nb = this.jNext
      
     this.jSteps.find('.step').removeClass('current').eq(idx % l).addClass('current')
   }
@@ -647,7 +643,7 @@
     if (this.cfg.unlimit && !this.touched) {
       idx = this.currentIndex
       rl = this.stepLength
-      l = Math.ceil(this.jItems.length * this.itemSize / this.moveUnit)
+      l = Math.ceil(this.jItem.length * this.itemSize / this.moveUnit)
       if (rl > 1) {
         if (idx <= 1) {
           idx = rl + 1
@@ -668,11 +664,10 @@
    */
   function _moveTo (idx, isImmediate) {
     var isVertical = this.isVertical,
-      l = this.jItems.length,
+      l = this.jItem.length,
       unitDist = this.moveUnit,
       range = this.scope,
       offset = this.cfg.offset,
-      multiple = this.multiple,
       rl = this.stepLength,
       dist = 0,
       that = this
@@ -697,12 +692,12 @@
     }
     
     if (!isImmediate && !this.cfg.noAnimate) {
-      _setAnimate.call(this, this.touched ? this.moveDist : this.currentDist, dist)
+      _setAnimate.call(this, this.touched ? this.moveDist : this.current, dist)
     } else {
       _setAnimate.call(this, dist, dist, 0)
     }
     this.currentIndex = idx
-    this.currentDist = dist
+    this.current = dist
     
     if (this.jSteps) {_toggleStepTo.apply(this)}
     if (this.cfg.ctrlBtn) {_checkCtrlBtn.apply(this)}
@@ -717,7 +712,7 @@
    */
   function _setIndexTo (idx) {
     var isVertical = this.isVertical,
-      wrapper = this.jWrapper,
+      wrapper = this.jWrap,
       l = this.stepLength,
       unitDist = this.moveUnit,
       offset = this.cfg.offset,
@@ -726,7 +721,7 @@
     dist = -1 * idx * unitDist + offset
     _setDist(this.jBox, dist, isVertical)
     this.currentIndex = idx
-    this.currentDist = dist
+    this.current = dist
     return this
   }
   
@@ -788,7 +783,7 @@
    */
   function _resetItems () {
     var l = this.stepLength - 1
-    this.jItems.each(function (i, o) {
+    this.jItem.each(function (i, o) {
       if (i > l) {$(o).remove()}
     })
   }
@@ -799,7 +794,7 @@
    */
   function _destroy () {
     var item = ''
-    this.jWrapper.remove()
+    this.jWrap.remove()
     for (item in this) {
       delete this[item]
     }
@@ -956,17 +951,15 @@
     return this
   }
   
-  NiceSlider.prototype = (function () {
-    return {
-      prev: _prev,
-      next: _next,
-      setIndexTo: _setIndexTo,
-      moveTo: _moveTo,
-      getIndex: _getIndex,
-      refresh: _refresh,
-      destroy: _destroy
-    }
-  }())
+  NiceSlider.prototype = {
+    prev: _prev,
+    next: _next,
+    setIndexTo: _setIndexTo,
+    moveTo: _moveTo,
+    getIndex: _getIndex,
+    refresh: _refresh,
+    destroy: _destroy
+  }
   
   if(typeof define === 'function' && define.amd) {
 		define([], function () {
