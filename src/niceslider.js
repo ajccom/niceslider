@@ -273,7 +273,7 @@
   function _create () {
     var html = '<div class="slider-wrapper"><div class="slider-content"></div></div>',
       cfg = this.cfg,
-      box = this.jBox,
+      box = null,
       items,
       wrapper,
       content,
@@ -287,13 +287,15 @@
     
     //处理refresh情况
     if (this.jWrap) {
-      var div = $('<div></div>')
-      div.append(box)
+      box = this.fragmentDom.clone(true)
       this.jWrap.after(box)
       this.jWrap.remove()
       delete this.jWrap
+      this.jBox = box
+    } else {
+      box = this.jBox
+      this.fragmentDom = box.clone(true)
     }
-    
     box.wrap(html)
     this.jWrap = wrapper = box.closest('.slider-wrapper')
     this.jItem = items = box.children()
@@ -766,26 +768,11 @@
    */
   function _refresh (cfg) {
     
-    if (this.cfg.unlimit === true) {
-      _resetItems.apply(this)
-    }
-    
-    this.cfg = _handleCfg($.extend(this.cfg, cfg || {}))
+    this.cfg = _handleCfg($.extend(this.cfg, {index: this.currentIndex}, cfg))
     if (this.timer) {clearTimeout(this.timer)}
     _sliderCount--
     _init.apply(this)
     return this
-  }
-  
-  /**
-   * 重置slider项
-   * @type {Function} 
-   */
-  function _resetItems () {
-    var l = this.stepLength - 1
-    this.jItem.each(function (i, o) {
-      if (i > l) {$(o).remove()}
-    })
   }
   
   /**
