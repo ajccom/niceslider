@@ -1,3 +1,12 @@
+# NiceSlider 1.0.2
+
+### fix bug
+
+- 修复refresh方法
+- refresh方法执行后默认为当前的index
+
+-----------------------
+
 # NiceSlider 1.0.1
 
 ### 新增

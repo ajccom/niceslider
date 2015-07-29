@@ -1,5 +1,5 @@
 # NiceSlider
-轻量级移动端滑动组件
+轻量级移动端Slide滑动组件
 
 目前NiceSlider的限制及缺陷：
 
@@ -24,8 +24,8 @@
 
 使用NiceSlider的优势：
 
-- 体积小，压缩后(开启gzip)文件大小只有3.2K；
-- 配置丰富，能满足大多数slider需求；
+- 体积小，压缩后(开启gzip)文件大小只有3.1K；
+- 配置丰富，能满足大多数slide需求；
 - 完美支持桌面与移动端。
 
 ## 用法
@@ -79,7 +79,7 @@ prev | - | 滑向前一项
 next | - | 滑向后一项
 setIndexTo | index | 立即定位至某项，不推荐使用，建议用moveTo替代
 moveTo | index, isImmediate | 滑动至某项, 第二个参数决定是否跳过动画，立即定位
-getIndex | - | 获取组件当前的索引
+getIndex | - | 获取组件当前的索引值
 checkLock | - | 获取组件双向锁定状态
 lock | - | 锁定组件，锁定的组件将无法双向滑动
 unlock | - | 解锁组件
@@ -92,8 +92,22 @@ unlockNext | - | 解锁组件
 refresh | config | 刷新组件，可以重新设定配置项
 destroy | - | 销毁组件
 
+## 属性
+
+属性名 | 类型 | 说明
+---- | ---- | ----
+fragmentDom | Object | 深复制原的DOM片段，`refresh`方法将会使用其进行刷新处理
+current | Number | 组件滑块目前的CSS位移值
+cfg | Object | 组件当前配置
+currentIndex | Number | 当前索引值，无缝循环下推荐使用`getIndex`方法
+
 ---------------
 
 ### [查看DEMO](http://ajccom.github.io/niceslider/)
+
+---------------
+
+### [Change log](https://github.com/ajccom/niceslider/blob/master/release/changelog.md)
+
 
 
