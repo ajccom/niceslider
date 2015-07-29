@@ -14,21 +14,27 @@
       end: _mobileCheck ? 'touchend' : 'mouseup'
     }
   
-  //获取浏览器前缀
   var _prefix = (function () {
     var div = document.createElement('div'),
       style = div.style,
-      arr = ['WebkitT', 'MozT', 'MsT'],
-      temp,
+    /*  arr = ['WebkitT', 'MozT', 'MsT'],
+      temp = '',
       i = 0,
-      l = 3,
-      result
-    for (i; i < l; i++) {
+      l = 3,*/
+      
+      result = ''
+      
+    /*for (i; i < l; i++) {
       temp = arr[i]
-      if (style[temp + 'ransform'] === '') {
+      if (typeof style[temp + 'ransform'] !== 'undefined') {
         result = '-' + temp.replace('T', '').toLowerCase() + '-'
         break
       }
+    }*/
+    if (style.WebkitTransform === '') {
+      result = '-webkit-'
+    } else if (style.MozTransform === '') {
+      result = '-moz-'
     }
     return result
   }())
@@ -112,7 +118,7 @@
    * @param {Number} d duration（持续时间） 置1，即d=1。
    * @return {Number}
    */
-  var _animationFunction = {
+  var _aniFn = {
     'ease-out-back': function (t, b, c, d) {
       var s = 1.70158
       return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b
@@ -127,7 +133,7 @@
    * @param {Object} obj 新增函数
    */
   function _extendAnimate (obj) {
-    $.extend(_animationFunction, obj)
+    $.extend(_aniFn, obj)
   }
   
   /**
@@ -135,10 +141,11 @@
    * @param {Object} obj 新增函数
    */
   function _rAF (fn) {
-    return (window.requestAnimationFrame ||
+    var a = (window.requestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
     window.mozRequestAnimationFrame ||
     setTimeout)(fn)
+    return a
   }
   
   function _cAF (id) {
@@ -162,32 +169,32 @@
       current = start,
       startTime = +new Date,
       pastTime = 0,
-      s = this,
-      isVertical = s.isVertical
-    if (s._at) {_cAF(s._at)}
+      isVertical = this.isVertical,
+      that = this
+    if (this._at) {_cAF(this._at)}
     
     function _step () {
-      s._at = _rAF(function () {
+      that._at = _rAF(function () {
         pastTime = +new Date - startTime
-        current = (_animationFunction[s.cfg.animation] || _animationFunction.linear)(pastTime, start, distence, time)
+        current = (_aniFn[that.cfg.animation] || _aniFn.linear)(pastTime, start, distence, time)
         _setDist(jDom, current, isVertical)
         
         //设置一下组件当前的位移值，方便手势操作时使用
-        //s.moveDist = current
+        //that.moveDist = current
         
         if (pastTime >= time) {
-          _cAF(s._at)
+          _cAF(that._at)
           _setDist(jDom, end, isVertical)
-          args.cb && args.cb.apply(s)
-          s._isAni = false
-          s.cfg.onChange && s.cfg.onChange.apply(s)
+          args.cb && args.cb.apply(that)
+          that._isAni = false
+          that.cfg.onChange && that.cfg.onChange.apply(that)
         } else {
           _step()
         }
       })
     }
     
-    s._isAni = true
+    this._isAni = true
     _step()
     
   }
@@ -197,7 +204,7 @@
    * @type {Function}
    */
   function _cancelAnimate () {
-    if (this._isAni) {clearInterval(this._at); this._isAni = false; _resetIndex.apply(this)}
+    if (this._isAni) {_cAF(this._at); this._isAni = false; _resetIndex.apply(this)}
   }
   
   /**
@@ -206,7 +213,7 @@
    * @param {Object} jDom jQuery/Zepto对象
    * @param {Number} left 位移值
    */
-  function _setAnimate (start, end, time) {
+  function _setAni (start, end, time) {
     //jDom.animate(data, 300, 'swing', function () {})
     _animate.call(this, {
       dom: this.jBox,
@@ -224,12 +231,12 @@
    * @param {Object} nextBtn 
    */
   function _bindCtrlBtn (prevBtn, nextBtn) {
-    var s = this
-    s.jPrev = prevBtn.on(ev.click, function () {
-      s.prev()
+    var that = this
+    this.jPrev = prevBtn.on(ev.click, function () {
+      that.prev()
     })
-    s.jNext = nextBtn.on(ev.click, function () {
-      s.next()
+    this.jNext = nextBtn.on(ev.click, function () {
+      that.next()
     })
   }
   
@@ -239,30 +246,30 @@
    */
   function _createSteps () {
     var i = 0,
-      s = this,
-      items = s.jItem,
-      l = s.stepLength,
+      items = this.jItem,
+      l = this.stepLength,
       html = '<ol class="slider-steps">',
-      indexFormat = s.cfg.indexFormat,
+      indexFormat = this.cfg.indexFormat,
+      that = this,
       steps = null,
-      cfg = s.cfg
+      cfg = this.cfg
     
     for (i; i < l; i++) {
-      html += '<li class="step">' + (indexFormat ? indexFormat.call(s, i) : i) + '</li>'
+      html += '<li class="step">' + (indexFormat ? indexFormat.call(that, i) : i) + '</li>'
     }
     html += '</ol>'
-    s.jWrap.append(html)
-    if (s.cfg.indexBind) {
-      steps = s.jWrap.find('.slider-steps').on(ev.click, '.step', function () {
-        var t = $(this), index
-        if (t.hasClass('disable')) {return}
-        index = steps.find('.step').index(t)
-        s.moveTo(index)
+    this.jWrap.append(html)
+    if (this.cfg.indexBind) {
+      steps = this.jWrap.find('.slider-steps').on(ev.click, '.step', function () {
+        var s = $(this), index
+        if (s.hasClass('disable')) {return}
+        index = steps.find('.step').index(s)
+        that.moveTo(index)
       })
     } else {
-      steps = s.jWrap.find('.slider-steps')
+      steps = this.jWrap.find('.slider-steps')
     }
-    s.jSteps = steps
+    this.jSteps = steps
   }
   
   /**
@@ -271,8 +278,7 @@
    */
   function _create () {
     var html = '<div class="slider-wrapper"><div class="slider-content"></div></div>',
-      s = this,
-      cfg = s.cfg,
+      cfg = this.cfg,
       box = null,
       items,
       wrapper,
@@ -283,27 +289,27 @@
       isVertical = cfg.dir === 'h' ? false : true,
       rangeWidth, rangeHeight, realLength, size
     
-    s.isVertical = isVertical
+    this.isVertical = isVertical
     
     //处理refresh情况
-    if (s.jWrap) {
-      box = s.fragmentDom.clone(true)
-      s.jWrap.after(box)
-      s.jWrap.remove()
-      delete s.jWrap
-      s.jBox = box
+    if (this.jWrap) {
+      box = this.fragmentDom.clone(true)
+      this.jWrap.after(box)
+      this.jWrap.remove()
+      delete this.jWrap
+      this.jBox = box
     } else {
-      box = s.jBox
-      s.fragmentDom = box.clone(true)
+      box = this.jBox
+      this.fragmentDom = box.clone(true)
     }
     box.wrap(html)
-    s.jWrap = wrapper = box.closest('.slider-wrapper')
-    s.jItem = items = box.children()
-    s.jContent = content = wrapper.find('.slider-content')
+    this.jWrap = wrapper = box.closest('.slider-wrapper')
+    this.jItem = items = box.children()
+    this.jContent = content = wrapper.find('.slider-content')
     if (cfg.ctrlBtn) {
       wrapper.append('<div class="slider-control"><span class="prev"><span class="prev-s"></span></span><span class="next"><span class="next-s"></span></span></div>')
-      _bindCtrlBtn.call(s, wrapper.find('.prev'), wrapper.find('.next'))
-      s.jCtrl = s.jWrap.find('.slider-control')
+      _bindCtrlBtn.call(this, wrapper.find('.prev'), wrapper.find('.next'))
+      this.jCtrl = this.jWrap.find('.slider-control')
     }
     if (items.length > 1) {
       //Zepto对象没有outWidth方法，降级使用width
@@ -319,58 +325,58 @@
         }
       
         //重新获取slider item
-        s.jItem = items = box.children()
+        this.jItem = items = box.children()
       }
       realLength = items.length / multiple
       
       if (!isVertical) {
-        s.jItem.width(width)
+        this.jItem.width(width)
         box.width(width * items.length)
         size = Math.ceil(width * items.length / multiple)
         content.height(box.height())
-        rangeWidth = size - s.jWrap.width() + cfg.offset
-        s.current = cfg.index * width
+        rangeWidth = size - this.jWrap.width() + cfg.offset
+        this.current = cfg.index * width
       } else {
-        s.jItem.height(height)
+        this.jItem.height(height)
         box.height(height * items.length)
         size = Math.ceil(height * items.length / multiple)
         content.width(box.width()).height(height)
-        rangeHeight = size - s.jWrap.height() + cfg.offset
-        s.current = cfg.index * height
+        rangeHeight = size - this.jWrap.height() + cfg.offset
+        this.current = cfg.index * height
       }
-      s.wrapperSize = isVertical ? wrapper.height() : wrapper.width()
-      s.itemSize = isVertical ? height : width
-      s.moveUnit = cfg.unit > 0 ? s.itemSize * cfg.unit : s.wrapperSize
-      s.scope = isVertical ? rangeHeight : rangeWidth
-      s.stepLength = cfg.unit > 0 ? Math.round(s.scope / s.moveUnit + 1) : Math.round(s.itemSize * realLength / s.wrapperSize)
-      if (cfg.unlimit) {s.stepLength += Math.round((s.wrapperSize - s.itemSize) / s.moveUnit)}
+      this.wrapperSize = isVertical ? wrapper.height() : wrapper.width()
+      this.itemSize = isVertical ? height : width
+      this.moveUnit = cfg.unit > 0 ? this.itemSize * cfg.unit : this.wrapperSize
+      this.scope = isVertical ? rangeHeight : rangeWidth
+      this.stepLength = cfg.unit > 0 ? Math.round(this.scope / this.moveUnit + 1) : Math.round(this.itemSize * realLength / this.wrapperSize)
+      if (cfg.unlimit && cfg.unit > 0) {this.stepLength += Math.round((this.wrapperSize - this.itemSize) / this.moveUnit)}
       if (cfg.indexBtn) {
-        _createSteps.apply(s)
+        _createSteps.apply(this)
       }
-      s.moveTo(cfg.index, true)
+      this.moveTo(cfg.index, true)
     } else {
       width = items.width()
       height = items.height()
       realLength = 1
-      s.wrapperSize = isVertical ? wrapper.height() : wrapper.width()
-      s.itemSize = isVertical ? height : width
-      s.moveUnit = 0
-      s.scope = 0
-      s.stepLength = 1
+      this.wrapperSize = isVertical ? wrapper.height() : wrapper.width()
+      this.itemSize = isVertical ? height : width
+      this.moveUnit = 0
+      this.scope = 0
+      this.stepLength = 1
       if (!isVertical) {
         box.width(width)
         content.height(box.height())
         rangeWidth = 0
         wrapper.addClass('slider-no-effect')
-        s.current = 0
-        s.moveTo(0, true)
+        this.current = 0
+        this.moveTo(0, true)
       } else {
         box.height(height)
         content.width(box.width())
         rangeHeight = 0
         wrapper.addClass('slider-no-effect')
-        s.current = 0
-        s.moveTo(0, true)
+        this.current = 0
+        this.moveTo(0, true)
       }
     }
   }
@@ -617,23 +623,23 @@
    * @type {Function} 
    */
   function _setAutoPlay () {
-    var s = this,
-      cfg = s.cfg
+    var that = this,
+      cfg = this.cfg
     if (cfg.autoPlay) {
-      if (s.timer) {clearTimeout(s.timer)}
-      s.timer = setTimeout(function () {
-        //s.next()
+      if (this.timer) {clearTimeout(this.timer)}
+      this.timer = setTimeout(function () {
+        //that.next()
         
-        var idx = s.currentIndex + 1
-        if (s.cfg.unlimit) {
-          s.moveTo(idx)
+        var idx = that.currentIndex + 1
+        if (that.cfg.unlimit) {
+          that.moveTo(idx)
         } else {
-          idx = idx % s.stepLength
-          s.moveTo(idx)
+          idx = idx % that.stepLength
+          that.moveTo(idx)
         }
         
-        _setAutoPlay.apply(s)
-      }, s.cfg.duration)
+        _setAutoPlay.apply(that)
+      }, this.cfg.duration)
     }
   }
   
@@ -666,24 +672,23 @@
    * @param {Boolean} isImmediate 是否立即定位
    */
   function _moveTo (idx, isImmediate) {
-    var s = this,
-      isVertical = s.isVertical,
-      l = s.jItem.length,
-      unitDist = s.moveUnit,
-      range = s.scope,
-      offset = s.cfg.offset,
-      rl = s.stepLength,
-      dist = 0
-      
+    var isVertical = this.isVertical,
+      l = this.jItem.length,
+      unitDist = this.moveUnit,
+      range = this.scope,
+      offset = this.cfg.offset,
+      rl = this.stepLength,
+      dist = 0,
+      that = this
     
-    if (s.cfg.unlimit) {
+    if (this.cfg.unlimit) {
       if (rl > 1) {
         if (idx <= 0) {
           idx = rl
-          s.setIndexTo(idx + 1)
+          this.setIndexTo(idx + 1)
         } else if (idx >= l - 1) {
           idx = l - 1 - rl
-          s.setIndexTo(idx - 1)
+          this.setIndexTo(idx - 1)
         }
         dist = -1 * idx * unitDist + offset
       } else {
@@ -695,18 +700,18 @@
       dist = Math.max(-1 * idx * unitDist + offset, -1 * range)
     }
     
-    if (!isImmediate && !s.cfg.noAnimate) {
-      _setAnimate.call(s, s.touched ? s.moveDist : s.current, dist)
+    if (!isImmediate && !this.cfg.noAnimate) {
+      _setAni.call(this, this.touched ? this.moveDist : this.current, dist)
     } else {
-      _setAnimate.call(s, dist, dist, 0)
+      _setAni.call(this, dist, dist, 0)
     }
-    s.currentIndex = idx
-    s.current = dist
+    this.currentIndex = idx
+    this.current = dist
     
-    if (s.jSteps) {_toggleStepTo.apply(s)}
-    if (s.cfg.ctrlBtn) {_checkCtrlBtn.apply(s)}
-    _setAutoPlay.apply(s)
-    return s
+    if (this.jSteps) {_toggleStepTo.apply(this)}
+    if (this.cfg.ctrlBtn) {_checkCtrlBtn.apply(this)}
+    _setAutoPlay.apply(this)
+    return this
   }
   
   /**
@@ -801,8 +806,8 @@
    * @type {Function} 
    */
   function _bind () {
-    var s = this
-    this.jContent.on(ev.start, function (e) {_touchstart.call(s, e)})
+    var that = this
+    this.jContent.on(ev.start, function (e) {_touchstart.call(that, e)})
     if (!_bound) {
       $(document).on(ev.move, _touchmove).on(ev.end, _touchend)
       _bound = true
