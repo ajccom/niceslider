@@ -162,32 +162,32 @@
       current = start,
       startTime = +new Date,
       pastTime = 0,
-      isVertical = this.isVertical,
-      that = this
-    if (this._at) {_cAF(this._at)}
+      s = this,
+      isVertical = s.isVertical
+    if (s._at) {_cAF(s._at)}
     
     function _step () {
-      that._at = _rAF(function () {
+      s._at = _rAF(function () {
         pastTime = +new Date - startTime
-        current = (_animationFunction[that.cfg.animation] || _animationFunction.linear)(pastTime, start, distence, time)
+        current = (_animationFunction[s.cfg.animation] || _animationFunction.linear)(pastTime, start, distence, time)
         _setDist(jDom, current, isVertical)
         
         //设置一下组件当前的位移值，方便手势操作时使用
-        //that.moveDist = current
+        //s.moveDist = current
         
         if (pastTime >= time) {
-          _cAF(that._at)
+          _cAF(s._at)
           _setDist(jDom, end, isVertical)
-          args.cb && args.cb.apply(that)
-          that._isAni = false
-          that.cfg.onChange && that.cfg.onChange.apply(that)
+          args.cb && args.cb.apply(s)
+          s._isAni = false
+          s.cfg.onChange && s.cfg.onChange.apply(s)
         } else {
           _step()
         }
       })
     }
     
-    this._isAni = true
+    s._isAni = true
     _step()
     
   }
@@ -224,12 +224,12 @@
    * @param {Object} nextBtn 
    */
   function _bindCtrlBtn (prevBtn, nextBtn) {
-    var that = this
-    this.jPrev = prevBtn.on(ev.click, function () {
-      that.prev()
+    var s = this
+    s.jPrev = prevBtn.on(ev.click, function () {
+      s.prev()
     })
-    this.jNext = nextBtn.on(ev.click, function () {
-      that.next()
+    s.jNext = nextBtn.on(ev.click, function () {
+      s.next()
     })
   }
   
@@ -239,30 +239,30 @@
    */
   function _createSteps () {
     var i = 0,
-      items = this.jItem,
-      l = this.stepLength,
+      s = this,
+      items = s.jItem,
+      l = s.stepLength,
       html = '<ol class="slider-steps">',
-      indexFormat = this.cfg.indexFormat,
-      that = this,
+      indexFormat = s.cfg.indexFormat,
       steps = null,
-      cfg = this.cfg
+      cfg = s.cfg
     
     for (i; i < l; i++) {
-      html += '<li class="step">' + (indexFormat ? indexFormat.call(that, i) : i) + '</li>'
+      html += '<li class="step">' + (indexFormat ? indexFormat.call(s, i) : i) + '</li>'
     }
     html += '</ol>'
-    this.jWrap.append(html)
-    if (this.cfg.indexBind) {
-      steps = this.jWrap.find('.slider-steps').on(ev.click, '.step', function () {
-        var s = $(this), index
-        if (s.hasClass('disable')) {return}
-        index = steps.find('.step').index(s)
-        that.moveTo(index)
+    s.jWrap.append(html)
+    if (s.cfg.indexBind) {
+      steps = s.jWrap.find('.slider-steps').on(ev.click, '.step', function () {
+        var t = $(this), index
+        if (t.hasClass('disable')) {return}
+        index = steps.find('.step').index(t)
+        s.moveTo(index)
       })
     } else {
-      steps = this.jWrap.find('.slider-steps')
+      steps = s.jWrap.find('.slider-steps')
     }
-    this.jSteps = steps
+    s.jSteps = steps
   }
   
   /**
@@ -617,23 +617,23 @@
    * @type {Function} 
    */
   function _setAutoPlay () {
-    var that = this,
-      cfg = this.cfg
+    var s = this,
+      cfg = s.cfg
     if (cfg.autoPlay) {
-      if (this.timer) {clearTimeout(this.timer)}
-      this.timer = setTimeout(function () {
-        //that.next()
+      if (s.timer) {clearTimeout(s.timer)}
+      s.timer = setTimeout(function () {
+        //s.next()
         
-        var idx = that.currentIndex + 1
-        if (that.cfg.unlimit) {
-          that.moveTo(idx)
+        var idx = s.currentIndex + 1
+        if (s.cfg.unlimit) {
+          s.moveTo(idx)
         } else {
-          idx = idx % that.stepLength
-          that.moveTo(idx)
+          idx = idx % s.stepLength
+          s.moveTo(idx)
         }
         
-        _setAutoPlay.apply(that)
-      }, this.cfg.duration)
+        _setAutoPlay.apply(s)
+      }, s.cfg.duration)
     }
   }
   
@@ -666,23 +666,24 @@
    * @param {Boolean} isImmediate 是否立即定位
    */
   function _moveTo (idx, isImmediate) {
-    var isVertical = this.isVertical,
-      l = this.jItem.length,
-      unitDist = this.moveUnit,
-      range = this.scope,
-      offset = this.cfg.offset,
-      rl = this.stepLength,
-      dist = 0,
-      that = this
+    var s = this,
+      isVertical = s.isVertical,
+      l = s.jItem.length,
+      unitDist = s.moveUnit,
+      range = s.scope,
+      offset = s.cfg.offset,
+      rl = s.stepLength,
+      dist = 0
+      
     
-    if (this.cfg.unlimit) {
+    if (s.cfg.unlimit) {
       if (rl > 1) {
         if (idx <= 0) {
           idx = rl
-          this.setIndexTo(idx + 1)
+          s.setIndexTo(idx + 1)
         } else if (idx >= l - 1) {
           idx = l - 1 - rl
-          this.setIndexTo(idx - 1)
+          s.setIndexTo(idx - 1)
         }
         dist = -1 * idx * unitDist + offset
       } else {
@@ -694,18 +695,18 @@
       dist = Math.max(-1 * idx * unitDist + offset, -1 * range)
     }
     
-    if (!isImmediate && !this.cfg.noAnimate) {
-      _setAnimate.call(this, this.touched ? this.moveDist : this.current, dist)
+    if (!isImmediate && !s.cfg.noAnimate) {
+      _setAnimate.call(s, s.touched ? s.moveDist : s.current, dist)
     } else {
-      _setAnimate.call(this, dist, dist, 0)
+      _setAnimate.call(s, dist, dist, 0)
     }
-    this.currentIndex = idx
-    this.current = dist
+    s.currentIndex = idx
+    s.current = dist
     
-    if (this.jSteps) {_toggleStepTo.apply(this)}
-    if (this.cfg.ctrlBtn) {_checkCtrlBtn.apply(this)}
-    _setAutoPlay.apply(this)
-    return this
+    if (s.jSteps) {_toggleStepTo.apply(s)}
+    if (s.cfg.ctrlBtn) {_checkCtrlBtn.apply(s)}
+    _setAutoPlay.apply(s)
+    return s
   }
   
   /**
@@ -800,8 +801,8 @@
    * @type {Function} 
    */
   function _bind () {
-    var that = this
-    this.jContent.on(ev.start, function (e) {_touchstart.call(that, e)})
+    var s = this
+    this.jContent.on(ev.start, function (e) {_touchstart.call(s, e)})
     if (!_bound) {
       $(document).on(ev.move, _touchmove).on(ev.end, _touchend)
       _bound = true
