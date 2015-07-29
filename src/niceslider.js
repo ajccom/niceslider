@@ -135,11 +135,10 @@
    * @param {Object} obj 新增函数
    */
   function _rAF (fn) {
-    var a = (window.requestAnimationFrame ||
+    return (window.requestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
     window.mozRequestAnimationFrame ||
     setTimeout)(fn)
-    return a
   }
   
   function _cAF (id) {
@@ -272,7 +271,8 @@
    */
   function _create () {
     var html = '<div class="slider-wrapper"><div class="slider-content"></div></div>',
-      cfg = this.cfg,
+      s = this,
+      cfg = s.cfg,
       box = null,
       items,
       wrapper,
@@ -283,27 +283,27 @@
       isVertical = cfg.dir === 'h' ? false : true,
       rangeWidth, rangeHeight, realLength, size
     
-    this.isVertical = isVertical
+    s.isVertical = isVertical
     
     //处理refresh情况
-    if (this.jWrap) {
-      box = this.fragmentDom.clone(true)
-      this.jWrap.after(box)
-      this.jWrap.remove()
-      delete this.jWrap
-      this.jBox = box
+    if (s.jWrap) {
+      box = s.fragmentDom.clone(true)
+      s.jWrap.after(box)
+      s.jWrap.remove()
+      delete s.jWrap
+      s.jBox = box
     } else {
-      box = this.jBox
-      this.fragmentDom = box.clone(true)
+      box = s.jBox
+      s.fragmentDom = box.clone(true)
     }
     box.wrap(html)
-    this.jWrap = wrapper = box.closest('.slider-wrapper')
-    this.jItem = items = box.children()
-    this.jContent = content = wrapper.find('.slider-content')
+    s.jWrap = wrapper = box.closest('.slider-wrapper')
+    s.jItem = items = box.children()
+    s.jContent = content = wrapper.find('.slider-content')
     if (cfg.ctrlBtn) {
       wrapper.append('<div class="slider-control"><span class="prev"><span class="prev-s"></span></span><span class="next"><span class="next-s"></span></span></div>')
-      _bindCtrlBtn.call(this, wrapper.find('.prev'), wrapper.find('.next'))
-      this.jCtrl = this.jWrap.find('.slider-control')
+      _bindCtrlBtn.call(s, wrapper.find('.prev'), wrapper.find('.next'))
+      s.jCtrl = s.jWrap.find('.slider-control')
     }
     if (items.length > 1) {
       //Zepto对象没有outWidth方法，降级使用width
@@ -319,57 +319,58 @@
         }
       
         //重新获取slider item
-        this.jItem = items = box.children()
+        s.jItem = items = box.children()
       }
       realLength = items.length / multiple
       
       if (!isVertical) {
-        this.jItem.width(width)
+        s.jItem.width(width)
         box.width(width * items.length)
         size = Math.ceil(width * items.length / multiple)
         content.height(box.height())
-        rangeWidth = size - this.jWrap.width() + cfg.offset
-        this.current = cfg.index * width
+        rangeWidth = size - s.jWrap.width() + cfg.offset
+        s.current = cfg.index * width
       } else {
-        this.jItem.height(height)
+        s.jItem.height(height)
         box.height(height * items.length)
         size = Math.ceil(height * items.length / multiple)
         content.width(box.width()).height(height)
-        rangeHeight = size - this.jWrap.height() + cfg.offset
-        this.current = cfg.index * height
+        rangeHeight = size - s.jWrap.height() + cfg.offset
+        s.current = cfg.index * height
       }
-      this.wrapperSize = isVertical ? wrapper.height() : wrapper.width()
-      this.itemSize = isVertical ? height : width
-      this.moveUnit = cfg.unit > 0 ? this.itemSize * cfg.unit : this.wrapperSize
-      this.scope = isVertical ? rangeHeight : rangeWidth
-      this.stepLength = cfg.unit > 0 ? Math.round(this.scope / this.moveUnit + 1) : Math.round(this.itemSize * realLength / this.wrapperSize)
+      s.wrapperSize = isVertical ? wrapper.height() : wrapper.width()
+      s.itemSize = isVertical ? height : width
+      s.moveUnit = cfg.unit > 0 ? s.itemSize * cfg.unit : s.wrapperSize
+      s.scope = isVertical ? rangeHeight : rangeWidth
+      s.stepLength = cfg.unit > 0 ? Math.round(s.scope / s.moveUnit + 1) : Math.round(s.itemSize * realLength / s.wrapperSize)
+      if (cfg.unlimit) {s.stepLength += Math.round((s.wrapperSize - s.itemSize) / s.moveUnit)}
       if (cfg.indexBtn) {
-        _createSteps.apply(this)
+        _createSteps.apply(s)
       }
-      this.moveTo(cfg.index, true)
+      s.moveTo(cfg.index, true)
     } else {
       width = items.width()
       height = items.height()
       realLength = 1
-      this.wrapperSize = isVertical ? wrapper.height() : wrapper.width()
-      this.itemSize = isVertical ? height : width
-      this.moveUnit = 0
-      this.scope = 0
-      this.stepLength = 1
+      s.wrapperSize = isVertical ? wrapper.height() : wrapper.width()
+      s.itemSize = isVertical ? height : width
+      s.moveUnit = 0
+      s.scope = 0
+      s.stepLength = 1
       if (!isVertical) {
         box.width(width)
         content.height(box.height())
         rangeWidth = 0
         wrapper.addClass('slider-no-effect')
-        this.current = 0
-        this.moveTo(0, true)
+        s.current = 0
+        s.moveTo(0, true)
       } else {
         box.height(height)
         content.width(box.width())
         rangeHeight = 0
         wrapper.addClass('slider-no-effect')
-        this.current = 0
-        this.moveTo(0, true)
+        s.current = 0
+        s.moveTo(0, true)
       }
     }
   }
