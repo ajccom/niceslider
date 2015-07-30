@@ -349,7 +349,7 @@
       this.moveUnit = cfg.unit > 0 ? this.itemSize * cfg.unit : this.wrapperSize
       this.scope = isVertical ? rangeHeight : rangeWidth
       this.stepLength = cfg.unit > 0 ? Math.round(this.scope / this.moveUnit + 1) : Math.round(this.itemSize * realLength / this.wrapperSize)
-      if (cfg.unlimit && cfg.unit > 0) {this.stepLength += Math.round((this.wrapperSize - this.itemSize) / this.moveUnit)}
+      if (cfg.unlimit && cfg.unit) {this.stepLength += Math.round((this.wrapperSize - cfg.offset - this.itemSize) / this.moveUnit)}
       if (cfg.indexBtn) {
         _createSteps.apply(this)
       }
