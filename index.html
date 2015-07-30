@@ -206,10 +206,8 @@ var slider5 = new NiceSlider('#slider5', {
             var idx = this.getIndex()
             if (idx === this.stepLength - 1) {
               loading.show()
-              this.jBox.append('<div class="slider-item"> slider item ' + (this.stepLength + 1) + '</div>')
-              this.refresh({
-                index: idx
-              })
+              this.fragmentDom.append('<div class="slider-item"> slider item ' + (this.stepLength + 1) + '</div>')
+              this.refresh()
               setTimeout(function () {
                 loading.hide()
               }, 1000)
@@ -228,10 +226,8 @@ var slider6 = new NiceSlider('#slider6', {
     var idx = this.getIndex()
     if (idx === this.stepLength - 1) {
       loading.show()
-      this.jBox.append('<div class="slider-item"> slider item ' + (this.stepLength + 1) + '</div>')
-      this.refresh({
-        index: idx
-      })
+      this.fragmentDom.append('<div class="slider-item"> slider item ' + (this.stepLength + 1) + '</div>')
+      this.refresh()
       setTimeout(function () {
         loading.hide()
       }, 1000)
