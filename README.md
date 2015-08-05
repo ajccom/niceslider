@@ -78,7 +78,7 @@ extendAnimate | Object | - | 用于扩展动画效果，比如增加`swing`，`ease-in`等
 prev | - | 滑向前一项
 next | - | 滑向后一项
 setIndexTo | index | 立即定位至某项，不推荐使用，建议用moveTo替代
-moveTo | index, isImmediate | 滑动至某项, 第二个参数决定是否跳过动画，立即定位
+moveTo | index, duration | 滑动至某项, 第二个参数决定动画持续时间
 getIndex | - | 获取组件当前的索引值
 checkLock | - | 获取组件双向锁定状态
 lock | - | 锁定组件，锁定的组件将无法双向滑动

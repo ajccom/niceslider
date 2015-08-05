@@ -219,7 +219,7 @@
       dom: this.jBox,
       start: start,
       end: end,
-      time: time || 300,
+      time: typeof time === 'number' ? time : 300,
       cb: _resetIndex
     })
   }
@@ -353,7 +353,7 @@
       if (cfg.indexBtn) {
         _createSteps.apply(this)
       }
-      this.moveTo(cfg.index, true)
+      this.moveTo(cfg.index, 0)
     } else {
       width = items.width()
       height = items.height()
@@ -369,14 +369,14 @@
         rangeWidth = 0
         wrapper.addClass('slider-no-effect')
         this.current = 0
-        this.moveTo(0, true)
+        this.moveTo(0, 0)
       } else {
         box.height(height)
         content.width(box.width())
         rangeHeight = 0
         wrapper.addClass('slider-no-effect')
         this.current = 0
-        this.moveTo(0, true)
+        this.moveTo(0, 0)
       }
     }
   }
@@ -669,9 +669,9 @@
    * slider定位到对应index
    * @type {Function} 
    * @param {Number} idx
-   * @param {Boolean} isImmediate 是否立即定位
+   * @param {Number} duration 是否立即定位
    */
-  function _moveTo (idx, isImmediate) {
+  function _moveTo (idx, duration) {
     var isVertical = this.isVertical,
       l = this.jItem.length,
       unitDist = this.moveUnit,
@@ -700,11 +700,12 @@
       dist = Math.max(-1 * idx * unitDist + offset, -1 * range)
     }
     
-    if (!isImmediate && !this.cfg.noAnimate) {
-      _setAni.call(this, this.touched ? this.moveDist : this.current, dist)
-    } else {
-      _setAni.call(this, dist, dist, 0)
-    }
+    //if (!isImmediate && !this.cfg.noAnimate) {
+      _setAni.call(this, this.touched ? this.moveDist : this.current, dist, this.cfg.noAnimate ? 0 : duration)
+    //} else {
+      //_setAni.call(this, dist, dist, 0)
+    //}
+    
     this.currentIndex = idx
     this.current = dist
     
