@@ -5,13 +5,14 @@
    * NiceSlider
    */
   
-  //å…¼å®¹PCä¸ç§»åŠ¨ç«¯äº‹ä»¶
+  //¼æÈİPCÓëÒÆ¶¯¶ËÊÂ¼ş
   var _mobileCheck = 'ontouchend' in document,
     ev = {
       click: 'click',
       start: _mobileCheck ? 'touchstart' : 'mousedown',
       move: _mobileCheck ? 'touchmove' : 'mousemove',
-      end: _mobileCheck ? 'touchend' : 'mouseup'
+      end: _mobileCheck ? 'touchend' : 'mouseup',
+      cancel: _mobileCheck ? 'touchcancel' : 'mousecancel'
     }
   
   var _prefix = (function () {
@@ -35,37 +36,37 @@
       result = '-webkit-'
     } else if (style.MozTransform === '') {
       result = '-moz-'
-    } else if(style.MsTransform === '') {
+    } else if (style.MsTransform === '') {
       result = '-ms-'
     }
     return result
   }())
   
   /**
-   * é…ç½®é¡¹
-   * @param {Boolean} unlimit æ˜¯å¦æ‰§è¡Œæ— ç¼å¾ªç¯
-   * @param {Boolean} ctrlBtn æ˜¯å¦åŠ ä¸Šå·¦å³æ§åˆ¶æŒ‰é’®
-   * @param {Boolean} indexBtn æ˜¯å¦åŠ ä¸Šåºåˆ—æ ‡ç­¾
-   * @param {Function} indexFormat indxBtnä¸ºtrueçš„æƒ…å†µä¸‹ï¼Œåºåˆ—æ ‡ç­¾å†…å®¹çš„formatå‡½æ•°ã€‚è¿”å›å€¼å°†è¢«æ’å…¥æ ‡ç­¾å…ƒç´ ä¸­
-   * @param {Number} unit æ»‘åŠ¨ä¸ªæ•°ï¼ˆé»˜è®¤1ï¼Œè®¾0è¡¨ç¤ºæŒ‰å±æ»šåŠ¨ï¼‰
-   * @param {Number} offset åç§»å€¼
-   * @param {Number} index åˆå§‹é¡¹åºå·
-   * @param {String} dir ç§»åŠ¨æ–¹å‘
-   * @param {Boolean} autoPlay æ˜¯å¦è‡ªåŠ¨æ’­æ”¾
-   * @param {Number} duration è‡ªåŠ¨æ’­æ”¾é—´éš”æ—¶é—´
-   * @param {Boolean} bounce æ˜¯å¦å…·æœ‰å›å¼¹æ•ˆæœ
-   * @param {Boolean} drag æ˜¯å¦æ”¯æŒæ‹–æ‹½
-   * @param {Boolean} indexBind indxBtnä¸ºtrueçš„æƒ…å†µä¸‹ï¼Œæ˜¯å¦ç»™åºåˆ—æ ‡ç­¾æ·»åŠ æ»‘åŠ¨äº‹ä»¶
-   * @param {Function} onChange å®šä½åŠ¨ç”»æ‰§è¡Œå®Œæˆåè§¦å‘
-   * @param {Boolean} noAnimate å…³é—­åŠ¨ç”»
-   * @param {String} animation æŒ‡å®šåŠ¨ç”»æ•ˆæœ
+   * ÅäÖÃÏî
+   * @param {Boolean} unlimit ÊÇ·ñÖ´ĞĞÎŞ·ìÑ­»·
+   * @param {Boolean} ctrlBtn ÊÇ·ñ¼ÓÉÏ×óÓÒ¿ØÖÆ°´Å¥
+   * @param {Boolean} indexBtn ÊÇ·ñ¼ÓÉÏĞòÁĞ±êÇ©
+   * @param {Function} indexFormat indxBtnÎªtrueµÄÇé¿öÏÂ£¬ĞòÁĞ±êÇ©ÄÚÈİµÄformatº¯Êı¡£·µ»ØÖµ½«±»²åÈë±êÇ©ÔªËØÖĞ
+   * @param {Number} unit »¬¶¯¸öÊı£¨Ä¬ÈÏ1£¬Éè0±íÊ¾°´ÆÁ¹ö¶¯£©
+   * @param {Number} offset Æ«ÒÆÖµ
+   * @param {Number} index ³õÊ¼ÏîĞòºÅ
+   * @param {String} dir ÒÆ¶¯·½Ïò
+   * @param {Boolean} autoPlay ÊÇ·ñ×Ô¶¯²¥·Å
+   * @param {Number} duration ×Ô¶¯²¥·Å¼ä¸ôÊ±¼ä
+   * @param {Boolean} bounce ÊÇ·ñ¾ßÓĞ»Øµ¯Ğ§¹û
+   * @param {Boolean} drag ÊÇ·ñÖ§³ÖÍÏ×§
+   * @param {Boolean} indexBind indxBtnÎªtrueµÄÇé¿öÏÂ£¬ÊÇ·ñ¸øĞòÁĞ±êÇ©Ìí¼Ó»¬¶¯ÊÂ¼ş
+   * @param {Function} onChange ¶¨Î»¶¯»­Ö´ĞĞÍê³Éºó´¥·¢
+   * @param {Boolean} noAnimate ¹Ø±Õ¶¯»­
+   * @param {String} animation Ö¸¶¨¶¯»­Ğ§¹û
    */
   var _defaultConfig = {
     unlimit: true,
     ctrlBtn: true,
     indexBtn: true,
     /*indexFormat: function (i) {
-      return 'ç¬¬' + i + 'ä¸ª'
+      return 'µÚ' + i + '¸ö'
     },
     extendAnimate: {
       'swing': function (t, b, c, d) {
@@ -87,7 +88,7 @@
   }
   
   /**
-   * å¤„ç†é…ç½®é¡¹
+   * ´¦ÀíÅäÖÃÏî
    * @type {Function} 
    * @param {Object} cfg
    * @return {Object}
@@ -97,35 +98,52 @@
   }
   
   /**
-   * è®¾ç½®å…ƒç´ ä½ç§»
+   * ÉèÖÃÔªËØÎ»ÒÆ
    * @type {Function} 
-   * @param {Object} jDom jQuery/Zeptoå¯¹è±¡
-   * @param {Number} dist ä½ç§»å€¼
+   * @param {Object} jDom jQuery/Zepto¶ÔÏó
+   * @param {Number} dist Î»ÒÆÖµ
    */
-  function _setDist (jDom, dist, isVertical) {
+  var _setDist = function (jDom, dist, isVertical) {
     var d = {}
-    if (!isVertical) {
-      if(!_mobileCheck){
-        d.left = dist + 'px'
-      }else{
+    if (_mobileCheck) {
+      if (!isVertical) {
         d[_prefix + 'transform'] = 'translate3d(' + dist + 'px, 0, 0)'
-      }
-    } else {
-      if(!_mobileCheck){
-        d.top = dist + 'px'
-      }else{
+      } else {
         d[_prefix + 'transform'] = 'translate3d(0, ' + dist + 'px, 0)'
       }
+      jDom.css(d)
+      _setDist = function (jDom, dist, isVertical) {
+        if (!isVertical) {
+          d[_prefix + 'transform'] = 'translate3d(' + dist + 'px, 0, 0)'
+        } else {
+          d[_prefix + 'transform'] = 'translate3d(0, ' + dist + 'px, 0)'
+        }
+        jDom.css(d)
+      }
+    } else {
+      if (!isVertical) {
+        d.left = dist + 'px'
+      } else {
+        d.top = dist + 'px'
+      }
+      jDom.css(d)
+      _setDist = function (jDom, dist, isVertical) {
+        if (!isVertical) {
+          d.left = dist + 'px'
+        } else {
+          d.top = dist + 'px'
+        }
+        jDom.css(d)
+      }
     }
-    jDom.css(d)
   }
   
   /**
-   * æ—¶é—´è½´æ‰­æ›²å‡½æ•°
-   * @param {Number} t current timeï¼ˆå½“å‰æ—¶é—´ï¼‰
-   * @param {Number} b beginning valueï¼ˆåˆå§‹å€¼ï¼‰ç½®0ï¼Œå³b=0ï¼›
-   * @param {Number} c change in valueï¼ˆå˜åŒ–é‡ï¼‰ç½®1ï¼Œå³c=1ï¼›
-   * @param {Number} d durationï¼ˆæŒç»­æ—¶é—´ï¼‰ ç½®1ï¼Œå³d=1ã€‚
+   * Ê±¼äÖáÅ¤Çúº¯Êı
+   * @param {Number} t current time£¨µ±Ç°Ê±¼ä£©
+   * @param {Number} b beginning value£¨³õÊ¼Öµ£©ÖÃ0£¬¼´b=0£»
+   * @param {Number} c change in value£¨±ä»¯Á¿£©ÖÃ1£¬¼´c=1£»
+   * @param {Number} d duration£¨³ÖĞøÊ±¼ä£© ÖÃ1£¬¼´d=1¡£
    * @return {Number}
    */
   var _aniFn = {
@@ -139,16 +157,16 @@
   }
   
   /**
-   * æ·»åŠ åŠ¨ç”»å‡½æ•°
-   * @param {Object} obj æ–°å¢å‡½æ•°
+   * Ìí¼Ó¶¯»­º¯Êı
+   * @param {Object} obj ĞÂÔöº¯Êı
    */
   function _extendAnimate (obj) {
     $.extend(_aniFn, obj)
   }
   
   /**
-   * ä½¿ç”¨requestAnimationFrameæ›¿ä»£setTimeout/setInterval
-   * @param {Object} obj æ–°å¢å‡½æ•°
+   * Ê¹ÓÃrequestAnimationFrameÌæ´úsetTimeout/setInterval
+   * @param {Object} obj ĞÂÔöº¯Êı
    */
   function _rAF (fn) {
     var a = (window.requestAnimationFrame ||
@@ -167,7 +185,7 @@
   }
   
   /**
-   * åŠ¨ç”»å‡½æ•°
+   * ¶¯»­º¯Êı
    * @param {Object} args
    */
   function _animate (args) {
@@ -189,7 +207,7 @@
         current = (_aniFn[that.cfg.animation] || _aniFn.linear)(pastTime, start, distence, time)
         _setDist(jDom, current, isVertical)
         
-        //è®¾ç½®ä¸€ä¸‹ç»„ä»¶å½“å‰çš„ä½ç§»å€¼ï¼Œæ–¹ä¾¿æ‰‹åŠ¿æ“ä½œæ—¶ä½¿ç”¨
+        //ÉèÖÃÒ»ÏÂ×é¼şµ±Ç°µÄÎ»ÒÆÖµ£¬·½±ãÊÖÊÆ²Ù×÷Ê±Ê¹ÓÃ
         //that.moveDist = current
         
         if (pastTime >= time) {
@@ -210,7 +228,7 @@
   }
   
   /**
-   * å–æ¶ˆåŠ¨ç”»å‡½æ•°
+   * È¡Ïû¶¯»­º¯Êı
    * @type {Function}
    */
   function _cancelAnimate () {
@@ -218,10 +236,10 @@
   }
   
   /**
-   * è®¾ç½®å…ƒç´ ä½ç§»åŠ¨ç”»
+   * ÉèÖÃÔªËØÎ»ÒÆ¶¯»­
    * @type {Function} 
-   * @param {Object} jDom jQuery/Zeptoå¯¹è±¡
-   * @param {Number} left ä½ç§»å€¼
+   * @param {Object} jDom jQuery/Zepto¶ÔÏó
+   * @param {Number} left Î»ÒÆÖµ
    */
   function _setAni (start, end, time) {
     //jDom.animate(data, 300, 'swing', function () {})
@@ -229,13 +247,13 @@
       dom: this.jBox,
       start: start,
       end: end,
-      time: time || 300,
+      time: typeof time === 'number' ? time : 300,
       cb: _resetIndex
     })
   }
   
   /**
-   * ä¸ºå‰åæ§åˆ¶å…ƒç´ ç»‘å®šäº‹ä»¶
+   * ÎªÇ°ºó¿ØÖÆÔªËØ°ó¶¨ÊÂ¼ş
    * @type {Function} 
    * @param {Object} prevBtn 
    * @param {Object} nextBtn 
@@ -251,7 +269,7 @@
   }
   
   /**
-   * åˆ›å»ºç´¢å¼•å†…å®¹
+   * ´´½¨Ë÷ÒıÄÚÈİ
    * @type {Function} 
    */
   function _createSteps () {
@@ -283,7 +301,7 @@
   }
   
   /**
-   * åˆ›å»ºç»„ä»¶DOMç»“æ„
+   * ´´½¨×é¼şDOM½á¹¹
    * @type {Function} 
    */
   function _create () {
@@ -301,7 +319,7 @@
     
     this.isVertical = isVertical
     
-    //å¤„ç†refreshæƒ…å†µ
+    //´¦ÀírefreshÇé¿ö
     if (this.jWrap) {
       box = this.fragmentDom.clone(true)
       this.jWrap.after(box)
@@ -322,7 +340,7 @@
       this.jCtrl = this.jWrap.find('.slider-control')
     }
     if (items.length > 1) {
-      //Zeptoå¯¹è±¡æ²¡æœ‰outWidthæ–¹æ³•ï¼Œé™çº§ä½¿ç”¨width
+      //Zepto¶ÔÏóÃ»ÓĞoutWidth·½·¨£¬½µ¼¶Ê¹ÓÃwidth
       width = items.width()
       height = items.height()
       
@@ -334,7 +352,7 @@
           multiple = 3
         }
       
-        //é‡æ–°è·å–slider item
+        //ÖØĞÂ»ñÈ¡slider item
         this.jItem = items = box.children()
       }
       realLength = items.length / multiple
@@ -363,7 +381,7 @@
       if (cfg.indexBtn) {
         _createSteps.apply(this)
       }
-      this.moveTo(cfg.index, true)
+      this.moveTo(cfg.index, 0)
     } else {
       width = items.width()
       height = items.height()
@@ -379,19 +397,19 @@
         rangeWidth = 0
         wrapper.addClass('slider-no-effect')
         this.current = 0
-        this.moveTo(0, true)
+        this.moveTo(0, 0)
       } else {
         box.height(height)
         content.width(box.width())
         rangeHeight = 0
         wrapper.addClass('slider-no-effect')
         this.current = 0
-        this.moveTo(0, true)
+        this.moveTo(0, 0)
       }
     }
   }
   
-  ////////////////////////dargç›¸å…³
+  ////////////////////////dargÏà¹Ø
   var _origin = {},
     _currentPoint = {},
     _locked = false,
@@ -404,10 +422,10 @@
     _sliderCount = 0
   
   /**
-   * è·å–äº‹ä»¶å¯¹è±¡ä¸­çš„åæ ‡å€¼
+   * »ñÈ¡ÊÂ¼ş¶ÔÏóÖĞµÄ×ø±êÖµ
    * @type {Function} 
    * @param {Object} e
-   * @return {Object} åŒ…å«åæ ‡å€¼çš„å¯¹è±¡
+   * @return {Object} °üº¬×ø±êÖµµÄ¶ÔÏó
    */
   var _getXY = function (e) {
     var e = e.originalEvent ? e.originalEvent : e,
@@ -426,7 +444,7 @@
   }
   
   /**
-   * å¤„ç†ç‚¹å‡»
+   * ´¦Àíµã»÷
    * @type {Function} 
    * @param {Object} e
    */
@@ -439,11 +457,11 @@
     _dir = 0
     _distance = 0
     _sliderArray.push(this)
-    if (this.timer) {clearTimeout(this.timer)}
+    //if (this.timer) {clearTimeout(this.timer)}
   }
   
   /**
-   * å¤„ç†æ»‘åŠ¨
+   * ´¦Àí»¬¶¯
    * @type {Function} 
    * @param {Object} e
    */
@@ -451,7 +469,7 @@
     _currentSlider = _sliderArray[0]
     if (_currentSlider && _currentSlider.cfg.drag && !_currentSlider.checkLock()) {
       if (_currentSlider.touched) {
-      	if (_currentSlider.timer) {clearTimeout(_currentSlider.timer)}
+        if (_currentSlider.timer) {clearTimeout(_currentSlider.timer)}
         _currentPoint = _getXY(e)
         _handleMove.call(_currentSlider, _currentSlider.isVertical ? (_currentPoint.y - _origin.y) : (_currentPoint.x - _origin.x))
         if (_locked) {e.preventDefault()}
@@ -462,7 +480,7 @@
   }
   
   /**
-   * å¤„ç†é‡Šæ”¾
+   * ´¦ÀíÊÍ·Å
    * @type {Function} 
    * @param {Object} e
    */
@@ -477,13 +495,13 @@
       }
       _setAutoPlay.apply(_currentSlider)
       _currentSlider.moveDist = 0
-      _currentSlider = null
-      _sliderArray = []
     }
+    _currentSlider = null
+    _sliderArray = []
   }
   
   /**
-   * åˆ¤å®šä¸Šä¸‹/å·¦å³æ»‘åŠ¨
+   * ÅĞ¶¨ÉÏÏÂ/×óÓÒ»¬¶¯
    * @type {Function} 
    * @param {Number} deltaX
    * @param {Number} deltaY
@@ -506,7 +524,7 @@
   }
   
   /**
-   * å¤„ç†è·Ÿéšç§»åŠ¨
+   * ´¦Àí¸úËæÒÆ¶¯
    * @type {Function} 
    * @param {Number} delta
    */
@@ -515,7 +533,7 @@
       _checkDir.call(this, _currentPoint.x - _origin.x, _currentPoint.y - _origin.y)
       return
     }
-    //è®¾ç½®slideræ»‘åŠ¨æ–¹å‘
+    //ÉèÖÃslider»¬¶¯·½Ïò
     _dir = delta > 0
     
     if (_dir && this.checkLockPrev()) {
@@ -529,12 +547,12 @@
     _move.call(this, delta)
   }
   
-  ///////////////dragç›¸å…³
+  ///////////////dragÏà¹Ø
   
   /**
-   * sliderç›¸å¯¹å½“å‰ä½ç½®åšç§»åŠ¨
+   * sliderÏà¶Ôµ±Ç°Î»ÖÃ×öÒÆ¶¯
    * @type {Function} 
-   * @param {Number} dist ä½ç§»è·ç¦»
+   * @param {Number} dist Î»ÒÆ¾àÀë
    */
   function _move (dist) {
     var isVertical = this.isVertical,
@@ -549,7 +567,7 @@
   }
   
   /**
-   * å¯¹sliderçš„ç§»åŠ¨å€¼åšæ£€æµ‹ç¡®å®šå½“å‰index
+   * ¶ÔsliderµÄÒÆ¶¯Öµ×ö¼ì²âÈ·¶¨µ±Ç°index
    * @type {Function} 
    */
   function _checkIndex () {
@@ -560,13 +578,13 @@
       rl = this.stepLength,
       d = Math.abs(_distance),
       deltaIndex = 0
-    //æœªè§¦å‘æ»‘åŠ¨äº‹ä»¶ _diræ˜¯0 ä¸æ˜¯booleanå€¼
+    //Î´´¥·¢»¬¶¯ÊÂ¼ş _dirÊÇ0 ²»ÊÇbooleanÖµ
     if (_dir === 0) {return}
             
     if (this.cfg.unlimit) {
       _dir ? this.prev() : this.next()
     } else {
-      //æ ¹æ®æ»‘åŠ¨è·ç¦»åˆ¤æ–­åˆ’è¿‡äº†å¤šå°‘ä¸ªitem
+      //¸ù¾İ»¬¶¯¾àÀëÅĞ¶Ï»®¹ıÁË¶àÉÙ¸öitem
       if (d > unitDist / 4) {
         deltaIndex = (_dir ? -1 : 1) * Math.ceil(d / unitDist)
       }
@@ -577,7 +595,7 @@
   }
   
   /**
-   * å¯¹sliderçš„æ§åˆ¶æŒ‰é’®åšæ£€æŸ¥
+   * ¶ÔsliderµÄ¿ØÖÆ°´Å¥×ö¼ì²é
    * @type {Function} 
    */
   function _checkCtrlBtn () {
@@ -588,7 +606,7 @@
       nb = this.jNext
     
     if (!cfg.unlimit) { 
-      //æ£€æŸ¥æ§åˆ¶æŒ‰é’®çŠ¶æ€
+      //¼ì²é¿ØÖÆ°´Å¥×´Ì¬
       if (idx === 0) {
         pb.addClass('disable')
       } else {
@@ -608,7 +626,7 @@
   }
   
   /**
-   * é«˜äº®å½“å‰index
+   * ¸ßÁÁµ±Ç°index
    * @type {Function} 
    */
   function _toggleStepTo () {
@@ -622,7 +640,7 @@
   }
   
   /**
-   * æä¾›ä¸€ä¸ªæ¥å£è®©ç”¨æˆ·è·å¾—æ­£ç¡®çš„å½“å‰ç´¢å¼•
+   * Ìá¹©Ò»¸ö½Ó¿ÚÈÃÓÃ»§»ñµÃÕıÈ·µÄµ±Ç°Ë÷Òı
    * @type {Function} 
    */
   function _getIndex () {
@@ -630,7 +648,7 @@
   }
   
   /**
-   * æ‰§è¡Œè‡ªåŠ¨æ’­æ”¾
+   * Ö´ĞĞ×Ô¶¯²¥·Å
    * @type {Function} 
    */
   function _setAutoPlay () {
@@ -655,7 +673,7 @@
   }
   
   /**
-   * æ— ç¼å¾ªç¯æ—¶ï¼ŒåŠ¨ç”»ç»“æŸåè®¾ç½®åˆç†çš„index
+   * ÎŞ·ìÑ­»·Ê±£¬¶¯»­½áÊøºóÉèÖÃºÏÀíµÄindex
    * @type {Function} 
    */
   function _resetIndex () {
@@ -677,12 +695,12 @@
   }
   
   /**
-   * sliderå®šä½åˆ°å¯¹åº”index
+   * slider¶¨Î»µ½¶ÔÓ¦index
    * @type {Function} 
    * @param {Number} idx
-   * @param {Boolean} isImmediate æ˜¯å¦ç«‹å³å®šä½
+   * @param {Number} duration ÊÇ·ñÁ¢¼´¶¨Î»
    */
-  function _moveTo (idx, isImmediate) {
+  function _moveTo (idx, duration) {
     var isVertical = this.isVertical,
       l = this.jItem.length,
       unitDist = this.moveUnit,
@@ -711,11 +729,12 @@
       dist = Math.max(-1 * idx * unitDist + offset, -1 * range)
     }
     
-    if (!isImmediate && !this.cfg.noAnimate) {
-      _setAni.call(this, this.touched ? this.moveDist : this.current, dist)
-    } else {
-      _setAni.call(this, dist, dist, 0)
-    }
+    //if (!isImmediate && !this.cfg.noAnimate) {
+      _setAni.call(this, this.touched ? this.moveDist : this.current, dist, this.cfg.noAnimate ? 0 : duration)
+    //} else {
+      //_setAni.call(this, dist, dist, 0)
+    //}
+    
     this.currentIndex = idx
     this.current = dist
     
@@ -726,7 +745,7 @@
   }
   
   /**
-   * sliderç«‹å³æ˜¾ç¤ºä¸ºå¯¹åº”indexé¡¹
+   * sliderÁ¢¼´ÏÔÊ¾Îª¶ÔÓ¦indexÏî
    * @type {Function} 
    * @param {Number} idx
    */
@@ -746,7 +765,7 @@
   }
   
   /**
-   * sliderå¾€å‰æ»‘åŠ¨ä¸€é¡¹
+   * sliderÍùÇ°»¬¶¯Ò»Ïî
    * @type {Function} 
    */
   function _prev () {
@@ -763,7 +782,7 @@
   }
   
   /**
-   * sliderå¾€åæ»‘åŠ¨ä¸€é¡¹
+   * sliderÍùºó»¬¶¯Ò»Ïî
    * @type {Function} 
    */
   function _next () {
@@ -780,7 +799,7 @@
   }
   
   /**
-   * åˆ·æ–°slider
+   * Ë¢ĞÂslider
    * @type {Function} 
    * @param {Object}
    */
@@ -794,7 +813,7 @@
   }
   
   /**
-   * å›æ”¶å®ä¾‹å¯¹è±¡
+   * »ØÊÕÊµÀı¶ÔÏó
    * @type {Function} 
    */
   function _destroy () {
@@ -813,29 +832,29 @@
   }
   
   /**
-   * ç»‘å®šæ‹–æ‹½ç›¸å…³äº‹ä»¶
+   * °ó¶¨ÍÏ×§Ïà¹ØÊÂ¼ş
    * @type {Function} 
    */
   function _bind () {
     var that = this
     this.jContent.on(ev.start, function (e) {_touchstart.call(that, e)})
     if (!_bound) {
-      $(document).on(ev.move, _touchmove).on(ev.end, _touchend)
+      $(document).on(ev.move, _touchmove).on(ev.end, _touchend).on(ev.cancel, _touchend)
       _bound = true
     }
   }
   
   /**
-   * ç§»é™¤ç›‘å¬äº‹ä»¶
+   * ÒÆ³ı¼àÌıÊÂ¼ş
    * @type {Function} 
    */
   function _unbind () {
-    $(document).off(ev.move, _touchmove).off(ev.end, _touchend)
+    $(document).off(ev.move, _touchmove).off(ev.end, _touchend).off(ev.cancel, _touchend)
     _bound = false
   }
   
   /**
-   * åˆå§‹åŒ–
+   * ³õÊ¼»¯
    * @type {Function} 
    */
   function _init () {
@@ -848,10 +867,10 @@
   }
   
   /**
-   * NiceSliderå‡½æ•°
+   * NiceSliderº¯Êı
    * @type {Function}
    * @param {Object} dom 
-   * @param {Object} cfg é…ç½®é¡¹
+   * @param {Object} cfg ÅäÖÃÏî
    */
   function NiceSlider (dom, cfg) {
     this.jBox = $(dom)
@@ -860,7 +879,7 @@
     var _islocked = false
     
     /**
-     * æ£€æŸ¥å½“å‰æ˜¯å¦é”å®š
+     * ¼ì²éµ±Ç°ÊÇ·ñËø¶¨
      * @type {Function}
      */
     function _checkLock () {
@@ -868,7 +887,7 @@
     }
     
     /**
-     * è®¾ç½®å½“å‰ä¸ºé”å®šçŠ¶æ€
+     * ÉèÖÃµ±Ç°ÎªËø¶¨×´Ì¬
      * @type {Function}
      */
     function _lock () {
@@ -877,7 +896,7 @@
     }
     
     /**
-     * è§£é”
+     * ½âËø
      * @type {Function}
      */
     function _unlock () {
@@ -889,12 +908,12 @@
     this.lock = _lock
     this.unlock = _unlock
     
-    //é”å®šå•æ–¹å‘
+    //Ëø¶¨µ¥·½Ïò
     var _isLockPrev = false,
       _isLockNext = false
       
     /**
-     * æ˜¯å¦é”å®šå‰ä¸€é¡¹
+     * ÊÇ·ñËø¶¨Ç°Ò»Ïî
      * @type {Function}
      */
     function _checkLockPrev () {
@@ -902,7 +921,7 @@
     }
     
     /**
-     * æ˜¯å¦é”å®šåä¸€é¡¹
+     * ÊÇ·ñËø¶¨ºóÒ»Ïî
      * @type {Function}
      */
     function _checkLockNext () {
@@ -910,7 +929,7 @@
     }
     
     /**
-     * é”å®šå‰ä¸€é¡¹
+     * Ëø¶¨Ç°Ò»Ïî
      * @type {Function}
      */
     function _lockPrev () {
@@ -919,7 +938,7 @@
     }
     
     /**
-     * è§£é”å‰ä¸€é¡¹
+     * ½âËøÇ°Ò»Ïî
      * @type {Function}
      */
     function _unlockPrev () {
@@ -928,7 +947,7 @@
     }
     
     /**
-     * é”å®šåä¸€é¡¹
+     * Ëø¶¨ºóÒ»Ïî
      * @type {Function}
      */
     function _lockNext () {
@@ -937,7 +956,7 @@
     }
     
     /**
-     * è§£é”åä¸€é¡¹
+     * ½âËøºóÒ»Ïî
      * @type {Function}
      */
     function _unlockNext () {
