@@ -112,14 +112,6 @@
         d[_prefix + 'transform'] = 'translate3d(0, ' + dist + 'px, 0)'
       }
       jDom.css(d)
-      _setDist = function (jDom, dist, isVertical) {
-        if (!isVertical) {
-          d[_prefix + 'transform'] = 'translate3d(' + dist + 'px, 0, 0)'
-        } else {
-          d[_prefix + 'transform'] = 'translate3d(0, ' + dist + 'px, 0)'
-        }
-        jDom.css(d)
-      }
     } else {
       if (!isVertical) {
         d.left = dist + 'px'
@@ -127,14 +119,6 @@
         d.top = dist + 'px'
       }
       jDom.css(d)
-      _setDist = function (jDom, dist, isVertical) {
-        if (!isVertical) {
-          d.left = dist + 'px'
-        } else {
-          d.top = dist + 'px'
-        }
-        jDom.css(d)
-      }
     }
   }
   
