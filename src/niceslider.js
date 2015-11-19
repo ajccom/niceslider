@@ -11,8 +11,7 @@
       click: 'click',
       start: _mobileCheck ? 'touchstart' : 'mousedown',
       move: _mobileCheck ? 'touchmove' : 'mousemove',
-      end: _mobileCheck ? 'touchend' : 'mouseup',
-      cancel: _mobileCheck ? 'touchcancel' : 'mousecancel'
+      end: _mobileCheck ? 'touchend' : 'mouseup'
     }
   
   var _prefix = (function () {
@@ -478,9 +477,9 @@
       }
       _setAutoPlay.apply(_currentSlider)
       _currentSlider.moveDist = 0
+      _currentSlider = null
+      _sliderArray = []
     }
-    _currentSlider = null
-    _sliderArray = []
   }
   
   /**
@@ -821,7 +820,7 @@
     var that = this
     this.jContent.on(ev.start, function (e) {_touchstart.call(that, e)})
     if (!_bound) {
-      $(document).on(ev.move, _touchmove).on(ev.end, _touchend).on(ev.cancel, _touchend)
+      $(document).on(ev.move, _touchmove).on(ev.end, _touchend)
       _bound = true
     }
   }
@@ -831,7 +830,7 @@
    * @type {Function} 
    */
   function _unbind () {
-    $(document).off(ev.move, _touchmove).off(ev.end, _touchend).off(ev.cancel, _touchend)
+    $(document).off(ev.move, _touchmove).off(ev.end, _touchend)
     _bound = false
   }
   
