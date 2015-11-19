@@ -1,3 +1,16 @@
+# NiceSlider 1.0.3
+
+### fix bug
+
+- 修复autoplay会停止的BUG
+- 优化无缝循环效果
+- 兼容IE8
+- 优化组件对象方法
+- 增加touchcancel处理
+- 其他BUG fix
+
+-----------------------
+
 # NiceSlider 1.0.2
 
 ### fix bug
