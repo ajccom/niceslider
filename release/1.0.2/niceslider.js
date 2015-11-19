@@ -5,7 +5,7 @@
    * NiceSlider
    */
   
-  //¼æÈİPCÓëÒÆ¶¯¶ËÊÂ¼ş
+  //å…¼å®¹PCä¸ç§»åŠ¨ç«¯äº‹ä»¶
   var _mobileCheck = 'ontouchend' in document,
     ev = {
       click: 'click',
@@ -35,35 +35,37 @@
       result = '-webkit-'
     } else if (style.MozTransform === '') {
       result = '-moz-'
+    } else if(style.MsTransform === '') {
+	  result = '-ms-'
     }
     return result
   }())
   
   /**
-   * ÅäÖÃÏî
-   * @param {Boolean} unlimit ÊÇ·ñÖ´ĞĞÎŞ·ìÑ­»·
-   * @param {Boolean} ctrlBtn ÊÇ·ñ¼ÓÉÏ×óÓÒ¿ØÖÆ°´Å¥
-   * @param {Boolean} indexBtn ÊÇ·ñ¼ÓÉÏĞòÁĞ±êÇ©
-   * @param {Function} indexFormat indxBtnÎªtrueµÄÇé¿öÏÂ£¬ĞòÁĞ±êÇ©ÄÚÈİµÄformatº¯Êı¡£·µ»ØÖµ½«±»²åÈë±êÇ©ÔªËØÖĞ
-   * @param {Number} unit »¬¶¯¸öÊı£¨Ä¬ÈÏ1£¬Éè0±íÊ¾°´ÆÁ¹ö¶¯£©
-   * @param {Number} offset Æ«ÒÆÖµ
-   * @param {Number} index ³õÊ¼ÏîĞòºÅ
-   * @param {String} dir ÒÆ¶¯·½Ïò
-   * @param {Boolean} autoPlay ÊÇ·ñ×Ô¶¯²¥·Å
-   * @param {Number} duration ×Ô¶¯²¥·Å¼ä¸ôÊ±¼ä
-   * @param {Boolean} bounce ÊÇ·ñ¾ßÓĞ»Øµ¯Ğ§¹û
-   * @param {Boolean} drag ÊÇ·ñÖ§³ÖÍÏ×§
-   * @param {Boolean} indexBind indxBtnÎªtrueµÄÇé¿öÏÂ£¬ÊÇ·ñ¸øĞòÁĞ±êÇ©Ìí¼Ó»¬¶¯ÊÂ¼ş
-   * @param {Function} onChange ¶¨Î»¶¯»­Ö´ĞĞÍê³Éºó´¥·¢
-   * @param {Boolean} noAnimate ¹Ø±Õ¶¯»­
-   * @param {String} animation Ö¸¶¨¶¯»­Ğ§¹û
+   * é…ç½®é¡¹
+   * @param {Boolean} unlimit æ˜¯å¦æ‰§è¡Œæ— ç¼å¾ªç¯
+   * @param {Boolean} ctrlBtn æ˜¯å¦åŠ ä¸Šå·¦å³æ§åˆ¶æŒ‰é’®
+   * @param {Boolean} indexBtn æ˜¯å¦åŠ ä¸Šåºåˆ—æ ‡ç­¾
+   * @param {Function} indexFormat indxBtnä¸ºtrueçš„æƒ…å†µä¸‹ï¼Œåºåˆ—æ ‡ç­¾å†…å®¹çš„formatå‡½æ•°ã€‚è¿”å›å€¼å°†è¢«æ’å…¥æ ‡ç­¾å…ƒç´ ä¸­
+   * @param {Number} unit æ»‘åŠ¨ä¸ªæ•°ï¼ˆé»˜è®¤1ï¼Œè®¾0è¡¨ç¤ºæŒ‰å±æ»šåŠ¨ï¼‰
+   * @param {Number} offset åç§»å€¼
+   * @param {Number} index åˆå§‹é¡¹åºå·
+   * @param {String} dir ç§»åŠ¨æ–¹å‘
+   * @param {Boolean} autoPlay æ˜¯å¦è‡ªåŠ¨æ’­æ”¾
+   * @param {Number} duration è‡ªåŠ¨æ’­æ”¾é—´éš”æ—¶é—´
+   * @param {Boolean} bounce æ˜¯å¦å…·æœ‰å›å¼¹æ•ˆæœ
+   * @param {Boolean} drag æ˜¯å¦æ”¯æŒæ‹–æ‹½
+   * @param {Boolean} indexBind indxBtnä¸ºtrueçš„æƒ…å†µä¸‹ï¼Œæ˜¯å¦ç»™åºåˆ—æ ‡ç­¾æ·»åŠ æ»‘åŠ¨äº‹ä»¶
+   * @param {Function} onChange å®šä½åŠ¨ç”»æ‰§è¡Œå®Œæˆåè§¦å‘
+   * @param {Boolean} noAnimate å…³é—­åŠ¨ç”»
+   * @param {String} animation æŒ‡å®šåŠ¨ç”»æ•ˆæœ
    */
   var _defaultConfig = {
     unlimit: true,
     ctrlBtn: true,
     indexBtn: true,
     /*indexFormat: function (i) {
-      return 'µÚ' + i + '¸ö'
+      return 'ç¬¬' + i + 'ä¸ª'
     },
     extendAnimate: {
       'swing': function (t, b, c, d) {
@@ -85,7 +87,7 @@
   }
   
   /**
-   * ´¦ÀíÅäÖÃÏî
+   * å¤„ç†é…ç½®é¡¹
    * @type {Function} 
    * @param {Object} cfg
    * @return {Object}
@@ -95,27 +97,36 @@
   }
   
   /**
-   * ÉèÖÃÔªËØÎ»ÒÆ
+   * è®¾ç½®å…ƒç´ ä½ç§»
    * @type {Function} 
-   * @param {Object} jDom jQuery/Zepto¶ÔÏó
-   * @param {Number} dist Î»ÒÆÖµ
+   * @param {Object} jDom jQuery/Zeptoå¯¹è±¡
+   * @param {Number} dist ä½ç§»å€¼
    */
   function _setDist (jDom, dist, isVertical) {
     var d = {}
-    if (!isVertical) {
-      d[_prefix + 'transform'] = 'translate3d(' + dist + 'px, 0, 0)'
+   if (!isVertical) {
+	if(!_mobileCheck){
+	    d.left = dist + 'px'
+	}else{
+            d[_prefix + 'transform'] = 'translate3d(' + dist + 'px, 0, 0)'
+	 }
     } else {
-      d[_prefix + 'transform'] = 'translate3d(0, ' + dist + 'px, 0)'
+	if(!_mobileCheck){
+	    d.top = dist + 'px'
+	}else{
+            d[_prefix + 'transform'] = 'translate3d(0, ' + dist + 'px, 0)'
+	}
+	  
     }
     jDom.css(d)
   }
   
   /**
-   * Ê±¼äÖáÅ¤Çúº¯Êı
-   * @param {Number} t current time£¨µ±Ç°Ê±¼ä£©
-   * @param {Number} b beginning value£¨³õÊ¼Öµ£©ÖÃ0£¬¼´b=0£»
-   * @param {Number} c change in value£¨±ä»¯Á¿£©ÖÃ1£¬¼´c=1£»
-   * @param {Number} d duration£¨³ÖĞøÊ±¼ä£© ÖÃ1£¬¼´d=1¡£
+   * æ—¶é—´è½´æ‰­æ›²å‡½æ•°
+   * @param {Number} t current timeï¼ˆå½“å‰æ—¶é—´ï¼‰
+   * @param {Number} b beginning valueï¼ˆåˆå§‹å€¼ï¼‰ç½®0ï¼Œå³b=0ï¼›
+   * @param {Number} c change in valueï¼ˆå˜åŒ–é‡ï¼‰ç½®1ï¼Œå³c=1ï¼›
+   * @param {Number} d durationï¼ˆæŒç»­æ—¶é—´ï¼‰ ç½®1ï¼Œå³d=1ã€‚
    * @return {Number}
    */
   var _aniFn = {
@@ -129,16 +140,16 @@
   }
   
   /**
-   * Ìí¼Ó¶¯»­º¯Êı
-   * @param {Object} obj ĞÂÔöº¯Êı
+   * æ·»åŠ åŠ¨ç”»å‡½æ•°
+   * @param {Object} obj æ–°å¢å‡½æ•°
    */
   function _extendAnimate (obj) {
     $.extend(_aniFn, obj)
   }
   
   /**
-   * Ê¹ÓÃrequestAnimationFrameÌæ´úsetTimeout/setInterval
-   * @param {Object} obj ĞÂÔöº¯Êı
+   * ä½¿ç”¨requestAnimationFrameæ›¿ä»£setTimeout/setInterval
+   * @param {Object} obj æ–°å¢å‡½æ•°
    */
   function _rAF (fn) {
     var a = (window.requestAnimationFrame ||
@@ -157,7 +168,7 @@
   }
   
   /**
-   * ¶¯»­º¯Êı
+   * åŠ¨ç”»å‡½æ•°
    * @param {Object} args
    */
   function _animate (args) {
@@ -179,7 +190,7 @@
         current = (_aniFn[that.cfg.animation] || _aniFn.linear)(pastTime, start, distence, time)
         _setDist(jDom, current, isVertical)
         
-        //ÉèÖÃÒ»ÏÂ×é¼şµ±Ç°µÄÎ»ÒÆÖµ£¬·½±ãÊÖÊÆ²Ù×÷Ê±Ê¹ÓÃ
+        //è®¾ç½®ä¸€ä¸‹ç»„ä»¶å½“å‰çš„ä½ç§»å€¼ï¼Œæ–¹ä¾¿æ‰‹åŠ¿æ“ä½œæ—¶ä½¿ç”¨
         //that.moveDist = current
         
         if (pastTime >= time) {
@@ -200,7 +211,7 @@
   }
   
   /**
-   * È¡Ïû¶¯»­º¯Êı
+   * å–æ¶ˆåŠ¨ç”»å‡½æ•°
    * @type {Function}
    */
   function _cancelAnimate () {
@@ -208,10 +219,10 @@
   }
   
   /**
-   * ÉèÖÃÔªËØÎ»ÒÆ¶¯»­
+   * è®¾ç½®å…ƒç´ ä½ç§»åŠ¨ç”»
    * @type {Function} 
-   * @param {Object} jDom jQuery/Zepto¶ÔÏó
-   * @param {Number} left Î»ÒÆÖµ
+   * @param {Object} jDom jQuery/Zeptoå¯¹è±¡
+   * @param {Number} left ä½ç§»å€¼
    */
   function _setAni (start, end, time) {
     //jDom.animate(data, 300, 'swing', function () {})
@@ -225,7 +236,7 @@
   }
   
   /**
-   * ÎªÇ°ºó¿ØÖÆÔªËØ°ó¶¨ÊÂ¼ş
+   * ä¸ºå‰åæ§åˆ¶å…ƒç´ ç»‘å®šäº‹ä»¶
    * @type {Function} 
    * @param {Object} prevBtn 
    * @param {Object} nextBtn 
@@ -241,7 +252,7 @@
   }
   
   /**
-   * ´´½¨Ë÷ÒıÄÚÈİ
+   * åˆ›å»ºç´¢å¼•å†…å®¹
    * @type {Function} 
    */
   function _createSteps () {
@@ -273,7 +284,7 @@
   }
   
   /**
-   * ´´½¨×é¼şDOM½á¹¹
+   * åˆ›å»ºç»„ä»¶DOMç»“æ„
    * @type {Function} 
    */
   function _create () {
@@ -291,7 +302,7 @@
     
     this.isVertical = isVertical
     
-    //´¦ÀírefreshÇé¿ö
+    //å¤„ç†refreshæƒ…å†µ
     if (this.jWrap) {
       box = this.fragmentDom.clone(true)
       this.jWrap.after(box)
@@ -312,7 +323,7 @@
       this.jCtrl = this.jWrap.find('.slider-control')
     }
     if (items.length > 1) {
-      //Zepto¶ÔÏóÃ»ÓĞoutWidth·½·¨£¬½µ¼¶Ê¹ÓÃwidth
+      //Zeptoå¯¹è±¡æ²¡æœ‰outWidthæ–¹æ³•ï¼Œé™çº§ä½¿ç”¨width
       width = items.width()
       height = items.height()
       
@@ -324,7 +335,7 @@
           multiple = 3
         }
       
-        //ÖØĞÂ»ñÈ¡slider item
+        //é‡æ–°è·å–slider item
         this.jItem = items = box.children()
       }
       realLength = items.length / multiple
@@ -381,7 +392,7 @@
     }
   }
   
-  ////////////////////////dargÏà¹Ø
+  ////////////////////////dargç›¸å…³
   var _origin = {},
     _currentPoint = {},
     _locked = false,
@@ -394,10 +405,10 @@
     _sliderCount = 0
   
   /**
-   * »ñÈ¡ÊÂ¼ş¶ÔÏóÖĞµÄ×ø±êÖµ
+   * è·å–äº‹ä»¶å¯¹è±¡ä¸­çš„åæ ‡å€¼
    * @type {Function} 
    * @param {Object} e
-   * @return {Object} °üº¬×ø±êÖµµÄ¶ÔÏó
+   * @return {Object} åŒ…å«åæ ‡å€¼çš„å¯¹è±¡
    */
   var _getXY = function (e) {
     var e = e.originalEvent ? e.originalEvent : e,
@@ -416,7 +427,7 @@
   }
   
   /**
-   * ´¦Àíµã»÷
+   * å¤„ç†ç‚¹å‡»
    * @type {Function} 
    * @param {Object} e
    */
@@ -433,7 +444,7 @@
   }
   
   /**
-   * ´¦Àí»¬¶¯
+   * å¤„ç†æ»‘åŠ¨
    * @type {Function} 
    * @param {Object} e
    */
@@ -441,6 +452,7 @@
     _currentSlider = _sliderArray[0]
     if (_currentSlider && _currentSlider.cfg.drag && !_currentSlider.checkLock()) {
       if (_currentSlider.touched) {
+      	if (_currentSlider.timer) {clearTimeout(_currentSlider.timer)}
         _currentPoint = _getXY(e)
         _handleMove.call(_currentSlider, _currentSlider.isVertical ? (_currentPoint.y - _origin.y) : (_currentPoint.x - _origin.x))
         if (_locked) {e.preventDefault()}
@@ -451,7 +463,7 @@
   }
   
   /**
-   * ´¦ÀíÊÍ·Å
+   * å¤„ç†é‡Šæ”¾
    * @type {Function} 
    * @param {Object} e
    */
@@ -472,7 +484,7 @@
   }
   
   /**
-   * ÅĞ¶¨ÉÏÏÂ/×óÓÒ»¬¶¯
+   * åˆ¤å®šä¸Šä¸‹/å·¦å³æ»‘åŠ¨
    * @type {Function} 
    * @param {Number} deltaX
    * @param {Number} deltaY
@@ -495,7 +507,7 @@
   }
   
   /**
-   * ´¦Àí¸úËæÒÆ¶¯
+   * å¤„ç†è·Ÿéšç§»åŠ¨
    * @type {Function} 
    * @param {Number} delta
    */
@@ -504,7 +516,7 @@
       _checkDir.call(this, _currentPoint.x - _origin.x, _currentPoint.y - _origin.y)
       return
     }
-    //ÉèÖÃslider»¬¶¯·½Ïò
+    //è®¾ç½®slideræ»‘åŠ¨æ–¹å‘
     _dir = delta > 0
     
     if (_dir && this.checkLockPrev()) {
@@ -518,12 +530,12 @@
     _move.call(this, delta)
   }
   
-  ///////////////dragÏà¹Ø
+  ///////////////dragç›¸å…³
   
   /**
-   * sliderÏà¶Ôµ±Ç°Î»ÖÃ×öÒÆ¶¯
+   * sliderç›¸å¯¹å½“å‰ä½ç½®åšç§»åŠ¨
    * @type {Function} 
-   * @param {Number} dist Î»ÒÆ¾àÀë
+   * @param {Number} dist ä½ç§»è·ç¦»
    */
   function _move (dist) {
     var isVertical = this.isVertical,
@@ -538,7 +550,7 @@
   }
   
   /**
-   * ¶ÔsliderµÄÒÆ¶¯Öµ×ö¼ì²âÈ·¶¨µ±Ç°index
+   * å¯¹sliderçš„ç§»åŠ¨å€¼åšæ£€æµ‹ç¡®å®šå½“å‰index
    * @type {Function} 
    */
   function _checkIndex () {
@@ -549,13 +561,13 @@
       rl = this.stepLength,
       d = Math.abs(_distance),
       deltaIndex = 0
-    //Î´´¥·¢»¬¶¯ÊÂ¼ş _dirÊÇ0 ²»ÊÇbooleanÖµ
+    //æœªè§¦å‘æ»‘åŠ¨äº‹ä»¶ _diræ˜¯0 ä¸æ˜¯booleanå€¼
     if (_dir === 0) {return}
             
     if (this.cfg.unlimit) {
       _dir ? this.prev() : this.next()
     } else {
-      //¸ù¾İ»¬¶¯¾àÀëÅĞ¶Ï»®¹ıÁË¶àÉÙ¸öitem
+      //æ ¹æ®æ»‘åŠ¨è·ç¦»åˆ¤æ–­åˆ’è¿‡äº†å¤šå°‘ä¸ªitem
       if (d > unitDist / 4) {
         deltaIndex = (_dir ? -1 : 1) * Math.ceil(d / unitDist)
       }
@@ -566,7 +578,7 @@
   }
   
   /**
-   * ¶ÔsliderµÄ¿ØÖÆ°´Å¥×ö¼ì²é
+   * å¯¹sliderçš„æ§åˆ¶æŒ‰é’®åšæ£€æŸ¥
    * @type {Function} 
    */
   function _checkCtrlBtn () {
@@ -577,7 +589,7 @@
       nb = this.jNext
     
     if (!cfg.unlimit) { 
-      //¼ì²é¿ØÖÆ°´Å¥×´Ì¬
+      //æ£€æŸ¥æ§åˆ¶æŒ‰é’®çŠ¶æ€
       if (idx === 0) {
         pb.addClass('disable')
       } else {
@@ -597,7 +609,7 @@
   }
   
   /**
-   * ¸ßÁÁµ±Ç°index
+   * é«˜äº®å½“å‰index
    * @type {Function} 
    */
   function _toggleStepTo () {
@@ -611,7 +623,7 @@
   }
   
   /**
-   * Ìá¹©Ò»¸ö½Ó¿ÚÈÃÓÃ»§»ñµÃÕıÈ·µÄµ±Ç°Ë÷Òı
+   * æä¾›ä¸€ä¸ªæ¥å£è®©ç”¨æˆ·è·å¾—æ­£ç¡®çš„å½“å‰ç´¢å¼•
    * @type {Function} 
    */
   function _getIndex () {
@@ -619,7 +631,7 @@
   }
   
   /**
-   * Ö´ĞĞ×Ô¶¯²¥·Å
+   * æ‰§è¡Œè‡ªåŠ¨æ’­æ”¾
    * @type {Function} 
    */
   function _setAutoPlay () {
@@ -644,7 +656,7 @@
   }
   
   /**
-   * ÎŞ·ìÑ­»·Ê±£¬¶¯»­½áÊøºóÉèÖÃºÏÀíµÄindex
+   * æ— ç¼å¾ªç¯æ—¶ï¼ŒåŠ¨ç”»ç»“æŸåè®¾ç½®åˆç†çš„index
    * @type {Function} 
    */
   function _resetIndex () {
@@ -666,10 +678,10 @@
   }
   
   /**
-   * slider¶¨Î»µ½¶ÔÓ¦index
+   * sliderå®šä½åˆ°å¯¹åº”index
    * @type {Function} 
    * @param {Number} idx
-   * @param {Boolean} isImmediate ÊÇ·ñÁ¢¼´¶¨Î»
+   * @param {Boolean} isImmediate æ˜¯å¦ç«‹å³å®šä½
    */
   function _moveTo (idx, isImmediate) {
     var isVertical = this.isVertical,
@@ -715,7 +727,7 @@
   }
   
   /**
-   * sliderÁ¢¼´ÏÔÊ¾Îª¶ÔÓ¦indexÏî
+   * sliderç«‹å³æ˜¾ç¤ºä¸ºå¯¹åº”indexé¡¹
    * @type {Function} 
    * @param {Number} idx
    */
@@ -735,7 +747,7 @@
   }
   
   /**
-   * sliderÍùÇ°»¬¶¯Ò»Ïî
+   * sliderå¾€å‰æ»‘åŠ¨ä¸€é¡¹
    * @type {Function} 
    */
   function _prev () {
@@ -752,7 +764,7 @@
   }
   
   /**
-   * sliderÍùºó»¬¶¯Ò»Ïî
+   * sliderå¾€åæ»‘åŠ¨ä¸€é¡¹
    * @type {Function} 
    */
   function _next () {
@@ -769,7 +781,7 @@
   }
   
   /**
-   * Ë¢ĞÂslider
+   * åˆ·æ–°slider
    * @type {Function} 
    * @param {Object}
    */
@@ -783,7 +795,7 @@
   }
   
   /**
-   * »ØÊÕÊµÀı¶ÔÏó
+   * å›æ”¶å®ä¾‹å¯¹è±¡
    * @type {Function} 
    */
   function _destroy () {
@@ -802,7 +814,7 @@
   }
   
   /**
-   * °ó¶¨ÍÏ×§Ïà¹ØÊÂ¼ş
+   * ç»‘å®šæ‹–æ‹½ç›¸å…³äº‹ä»¶
    * @type {Function} 
    */
   function _bind () {
@@ -815,7 +827,7 @@
   }
   
   /**
-   * ÒÆ³ı¼àÌıÊÂ¼ş
+   * ç§»é™¤ç›‘å¬äº‹ä»¶
    * @type {Function} 
    */
   function _unbind () {
@@ -824,7 +836,7 @@
   }
   
   /**
-   * ³õÊ¼»¯
+   * åˆå§‹åŒ–
    * @type {Function} 
    */
   function _init () {
@@ -837,10 +849,10 @@
   }
   
   /**
-   * NiceSliderº¯Êı
+   * NiceSliderå‡½æ•°
    * @type {Function}
    * @param {Object} dom 
-   * @param {Object} cfg ÅäÖÃÏî
+   * @param {Object} cfg é…ç½®é¡¹
    */
   function NiceSlider (dom, cfg) {
     this.jBox = $(dom)
@@ -849,7 +861,7 @@
     var _islocked = false
     
     /**
-     * ¼ì²éµ±Ç°ÊÇ·ñËø¶¨
+     * æ£€æŸ¥å½“å‰æ˜¯å¦é”å®š
      * @type {Function}
      */
     function _checkLock () {
@@ -857,7 +869,7 @@
     }
     
     /**
-     * ÉèÖÃµ±Ç°ÎªËø¶¨×´Ì¬
+     * è®¾ç½®å½“å‰ä¸ºé”å®šçŠ¶æ€
      * @type {Function}
      */
     function _lock () {
@@ -866,7 +878,7 @@
     }
     
     /**
-     * ½âËø
+     * è§£é”
      * @type {Function}
      */
     function _unlock () {
@@ -878,12 +890,12 @@
     this.lock = _lock
     this.unlock = _unlock
     
-    //Ëø¶¨µ¥·½Ïò
+    //é”å®šå•æ–¹å‘
     var _isLockPrev = false,
       _isLockNext = false
       
     /**
-     * ÊÇ·ñËø¶¨Ç°Ò»Ïî
+     * æ˜¯å¦é”å®šå‰ä¸€é¡¹
      * @type {Function}
      */
     function _checkLockPrev () {
@@ -891,7 +903,7 @@
     }
     
     /**
-     * ÊÇ·ñËø¶¨ºóÒ»Ïî
+     * æ˜¯å¦é”å®šåä¸€é¡¹
      * @type {Function}
      */
     function _checkLockNext () {
@@ -899,7 +911,7 @@
     }
     
     /**
-     * Ëø¶¨Ç°Ò»Ïî
+     * é”å®šå‰ä¸€é¡¹
      * @type {Function}
      */
     function _lockPrev () {
@@ -908,7 +920,7 @@
     }
     
     /**
-     * ½âËøÇ°Ò»Ïî
+     * è§£é”å‰ä¸€é¡¹
      * @type {Function}
      */
     function _unlockPrev () {
@@ -917,7 +929,7 @@
     }
     
     /**
-     * Ëø¶¨ºóÒ»Ïî
+     * é”å®šåä¸€é¡¹
      * @type {Function}
      */
     function _lockNext () {
@@ -926,7 +938,7 @@
     }
     
     /**
-     * ½âËøºóÒ»Ïî
+     * è§£é”åä¸€é¡¹
      * @type {Function}
      */
     function _unlockNext () {
