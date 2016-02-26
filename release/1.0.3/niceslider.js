@@ -802,7 +802,7 @@
    */
   function _destroy () {
     var item = ''
-    this.jWrap.remove()
+    this.jWrap.off().remove()
     for (item in this) {
       delete this[item]
     }
@@ -824,6 +824,12 @@
     this.jContent.on(ev.start, function (e) {_touchstart.call(that, e)})
     if (!_bound) {
       $(document).on(ev.move, _touchmove).on(ev.end, _touchend).on(ev.cancel, _touchend)
+      
+      !_mobileCheck && this.jWrap.hover(function () {
+        that.timer && clearTimeout(that.timer)
+      }, function () {
+        _setAutoPlay.apply(that)
+      })
       _bound = true
     }
   }
