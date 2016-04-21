@@ -70,6 +70,7 @@ indexBind | Boolean | true | 索引元素点击触发定位
 noAnimate | Boolean | false | 关闭动画
 animation | String | ease-out-back | 指定动画效果，可选的有`ease-out-back`，`linear`
 extendAnimate | Object | - | 用于扩展动画效果，比如增加`swing`，`ease-in`等
+onChange | Function | - | 设置滑动后的回调函数
 
 ## 方法
 
