@@ -427,63 +427,66 @@
     return {x: x, y: y} 
   }
   
-/**
- * 处理点击
- * @type {Function} 
- * @param {Object} e
- */
-function _touchstart (e) {
-  _cancelAnimate.apply(this)
-  this.touched = true
-  _origin = _getXY(e)
-  _locked = false
-  _isChecked = false
-  _dir = 0
-  _distance = 0
-  _sliderArray.push(this)
-  if (_mobileCheck && this.timer) {clearTimeout(this.timer)}
-}
-  
-/**
- * 处理滑动
- * @type {Function} 
- * @param {Object} e
- */
-function _touchmove (e) {
-  _currentSlider = _sliderArray[0]
-  if (_currentSlider && _currentSlider.cfg.drag && !_currentSlider.checkLock()) {
-    if (_currentSlider.touched) {
-      if (_currentSlider.timer) {clearTimeout(_currentSlider.timer)}
-      _currentPoint = _getXY(e)
-      _handleMove.call(_currentSlider, _currentSlider.isVertical ? (_currentPoint.y - _origin.y) : (_currentPoint.x - _origin.x))
-      if (_locked) {e.preventDefault()}
-    }
-  } else {
-    _sliderArray.shift()
+  /**
+   * 处理点击
+   * @type {Function} 
+   * @param {Object} e
+   */
+  function _touchstart (e) {
+    _cancelAnimate.apply(this)
+    this.touched = true
+    _origin = _getXY(e)
+    _locked = false
+    _isChecked = false
+    _dir = 0
+    _distance = 0
+    _sliderArray.push(this)
+    if (_mobileCheck && this.timer) {clearTimeout(this.timer)}
   }
-}
-  
-/**
- * 处理释放
- * @type {Function} 
- * @param {Object} e
- */
-function _touchend (e) {
-  _currentSlider = _sliderArray[0] || null
-  if (_currentSlider) {
-    if (_currentSlider.cfg.drag) {
-      _origin = {}
-      _currentPoint = {}
-      if (_locked) {_checkIndex.apply(_currentSlider)}
-      _currentSlider.touched = false
-      _locked = false
+    
+  /**
+   * 处理滑动
+   * @type {Function} 
+   * @param {Object} e
+   */
+  function _touchmove (e) {
+    _currentSlider = _sliderArray[0]
+    if (_currentSlider && _currentSlider.cfg.drag && !_currentSlider.checkLock()) {
+      if (_currentSlider.touched) {
+        if (_currentSlider.timer) {clearTimeout(_currentSlider.timer)}
+        _currentPoint = _getXY(e)
+        _handleMove.call(_currentSlider, _currentSlider.isVertical ? (_currentPoint.y - _origin.y) : (_currentPoint.x - _origin.x))
+        if (_locked) {e.preventDefault()}
+      }
+    } else {
+      _sliderArray.shift()
     }
-    _setAutoPlay.apply(_currentSlider)
-    _currentSlider.moveDist = 0
   }
-  _currentSlider = null
-  _sliderArray = []
-}
+    
+  /**
+   * 处理释放
+   * @type {Function} 
+   * @param {Object} e
+   */
+  function _touchend (e) {
+    //有时候不会触发touchmove，比如 touchstart 后直接 touchcancel 了，所以判断下 _sliderArray[0]
+    _currentSlider = _currentSlider || _sliderArray[0] || null
+    if (_currentSlider) {
+      if (_currentSlider.cfg.drag) {
+        _origin = {}
+        _currentPoint = {}
+        if (_locked) {_checkIndex.apply(_currentSlider)}
+        _currentSlider.touched = false
+        _locked = false
+      }
+      //如果遇到在webview下出现一帧滑动多个图片时候，尝试启用下面的代码
+      //if (_currentSlider.timer) {clearTimeout(_currentSlider.timer)}
+      _setAutoPlay.apply(_currentSlider)
+      _currentSlider.moveDist = 0
+    }
+    _currentSlider = null
+    _sliderArray = []
+  }
   
   /**
    * 判定上下/左右滑动
