@@ -427,62 +427,63 @@
     return {x: x, y: y} 
   }
   
-  /**
-   * 处理点击
-   * @type {Function} 
-   * @param {Object} e
-   */
-  function _touchstart (e) {
-    _cancelAnimate.apply(this)
-    this.touched = true
-    _origin = _getXY(e)
-    _locked = false
-    _isChecked = false
-    _dir = 0
-    _distance = 0
-    _sliderArray.push(this)
-    //if (this.timer) {clearTimeout(this.timer)}
-  }
+/**
+ * 处理点击
+ * @type {Function} 
+ * @param {Object} e
+ */
+function _touchstart (e) {
+  _cancelAnimate.apply(this)
+  this.touched = true
+  _origin = _getXY(e)
+  _locked = false
+  _isChecked = false
+  _dir = 0
+  _distance = 0
+  _sliderArray.push(this)
+  if (_mobileCheck && this.timer) {clearTimeout(this.timer)}
+}
   
-  /**
-   * 处理滑动
-   * @type {Function} 
-   * @param {Object} e
-   */
-  function _touchmove (e) {
-    _currentSlider = _sliderArray[0]
-    if (_currentSlider && _currentSlider.cfg.drag && !_currentSlider.checkLock()) {
-      if (_currentSlider.touched) {
-        if (_currentSlider.timer) {clearTimeout(_currentSlider.timer)}
-        _currentPoint = _getXY(e)
-        _handleMove.call(_currentSlider, _currentSlider.isVertical ? (_currentPoint.y - _origin.y) : (_currentPoint.x - _origin.x))
-        if (_locked) {e.preventDefault()}
-      }
-    } else {
-      _sliderArray.shift()
+/**
+ * 处理滑动
+ * @type {Function} 
+ * @param {Object} e
+ */
+function _touchmove (e) {
+  _currentSlider = _sliderArray[0]
+  if (_currentSlider && _currentSlider.cfg.drag && !_currentSlider.checkLock()) {
+    if (_currentSlider.touched) {
+      if (_currentSlider.timer) {clearTimeout(_currentSlider.timer)}
+      _currentPoint = _getXY(e)
+      _handleMove.call(_currentSlider, _currentSlider.isVertical ? (_currentPoint.y - _origin.y) : (_currentPoint.x - _origin.x))
+      if (_locked) {e.preventDefault()}
     }
+  } else {
+    _sliderArray.shift()
   }
+}
   
-  /**
-   * 处理释放
-   * @type {Function} 
-   * @param {Object} e
-   */
-  function _touchend (e) {
-    if (_currentSlider) {
-      if (_currentSlider.cfg.drag) {
-        _origin = {}
-        _currentPoint = {}
-        if (_locked) {_checkIndex.apply(_currentSlider)}
-        _currentSlider.touched = false
-        _locked = false
-      }
-      _setAutoPlay.apply(_currentSlider)
-      _currentSlider.moveDist = 0
+/**
+ * 处理释放
+ * @type {Function} 
+ * @param {Object} e
+ */
+function _touchend (e) {
+  _currentSlider = _sliderArray[0] || null
+  if (_currentSlider) {
+    if (_currentSlider.cfg.drag) {
+      _origin = {}
+      _currentPoint = {}
+      if (_locked) {_checkIndex.apply(_currentSlider)}
+      _currentSlider.touched = false
+      _locked = false
     }
-    _currentSlider = null
-    _sliderArray = []
+    _setAutoPlay.apply(_currentSlider)
+    _currentSlider.moveDist = 0
   }
+  _currentSlider = null
+  _sliderArray = []
+}
   
   /**
    * 判定上下/左右滑动
