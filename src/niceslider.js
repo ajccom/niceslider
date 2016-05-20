@@ -94,6 +94,8 @@
    * @return {Object}
    */
   function _handleCfg (cfg) {
+    //存在 unit 时，设置 unlimit 为 false，原因是作者不会处理 unlimit 的 Carousel
+    if (typeof cfg.unit !== 'undefined') {cfg.unlimit = false}
     return $.extend({}, _defaultConfig, cfg)
   }
   
@@ -275,8 +277,8 @@
       steps = this.jWrap.find('.slider-steps').on(ev.click, '.step', function () {
         var s = $(this), index
         if (s.hasClass('disable')) {return}
-        index = steps.find('.step').index(s)
-        that.moveTo(index)
+        var delta = steps.find('.step').index(steps.find('.current')) - steps.find('.step').index(s)
+        that.moveTo(that.currentIndex - delta)
       })
     } else {
       steps = this.jWrap.find('.slider-steps')
@@ -593,7 +595,7 @@
       pb = this.jPrev,
       nb = this.jNext
     
-    if (!cfg.unlimit) { 
+    if (!cfg.unlimit) {
       //检查控制按钮状态
       if (idx === 0) {
         pb.addClass('disable')
