@@ -379,6 +379,11 @@ var slider13 = new NiceSlider('#slider13', {dir: 'v', ctrlBtn: false, indexBtn: 
             <div class="slider-item"> slider item 4</div>
             <div class="slider-item"> slider item 5</div>
             <div class="slider-item"> slider item 6</div>
+            <div class="slider-item"> slider item 7</div>
+            <div class="slider-item"> slider item 8</div>
+            <div class="slider-item"> slider item 9</div>
+            <div class="slider-item"> slider item 10</div>
+            <div class="slider-item"> slider item 11</div>
           </div>
         </div>
         <style>
@@ -389,9 +394,11 @@ var slider13 = new NiceSlider('#slider13', {dir: 'v', ctrlBtn: false, indexBtn: 
         </style>
       </div>
       <script>
-        var slider14 = new NiceSlider('#slider14', {unlimit: true, unit: 0})
+        var slider14 = new NiceSlider('#slider14', {unlimit: false, unit: 0})
       </script>
-      <div class="code-unit"><pre>var slider14 = new NiceSlider('#slider14', {unlimit: true, unit: 0})</pre></div>
+      <div class="code-unit"><pre>var slider14 = new NiceSlider('#slider14', {unlimit: false, unit: 0})</pre>
+      目前暂未处理无限滚动的 Carousel 效果，既即使设置了 unlimit:true 也会被重置为 false
+      </div>
       
       <hr />
       
