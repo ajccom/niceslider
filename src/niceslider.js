@@ -828,17 +828,16 @@
    */
   function _bind () {
     var that = this
-    this.jContent.on(ev.start, function (e) {_touchstart.call(that, e)})
+    this.cfg.drag && this.jContent.bind(ev.start, function (e) {_touchstart.call(that, e)})
     if (!_bound) {
-      $(document).on(ev.move, _touchmove).on(ev.end, _touchend).on(ev.cancel, _touchend)
-      
-      !_mobileCheck && this.jWrap.hover(function () {
-        that.timer && clearTimeout(that.timer)
-      }, function () {
-        _setAutoPlay.apply(that)
-      })
+      this.cfg.drag && $(document).bind(ev.move, _touchmove).bind(ev.end, _touchend).bind(ev.cancel, _touchend)
       _bound = true
     }
+    !_mobileCheck && this.jWrap.hover(function () {
+      that.timer && clearTimeout(that.timer)
+    }, function () {
+      _setAutoPlay.apply(that)
+    })
   }
   
   /**
