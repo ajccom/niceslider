@@ -1,0 +1,464 @@
+/**
+ * _map 遍历对象，辅助函数
+ * @param {Object|Array} arr 遍历对象
+ * @param {Function} cb 回调函数，传入参数
+      @param {Object} 数组子项
+      @param {Number} 序号
+ * @return {Array} 数组对象
+ */
+function _map (arr, cb) {
+  if (!arr) {return}
+  return Array.prototype.map.call(arr, function (o, i) {
+    return cb ? cb(o, i) : o
+  })
+}
+
+/**
+ * _addClass 添加类，辅助函数
+ * @param {Object|Array} DOM 对象
+ * @param {String} klass 类字符串
+ * @return {Object|Array} DOM 对象
+ */
+function _addClass (element, klass) {
+  if (!element || !klass) {return}
+  var arr = element.item ? _map(element) : [element]
+  var regs = klass.split(' ').map(function (str) {
+    return {reg: new RegExp('(\\s+|^)' + str + '(\\s+|$)'), str: str}
+  })
+  arr.map(function (node) {
+    var str = node.className
+    if (!str) {
+      node.className = klass
+    } else {
+      regs.map(function (obj) {
+        !obj.reg.test(str) && (str += ' ' + obj.str)
+      })
+      node.className = str
+    }
+  })
+  return element
+}
+
+/**
+ * _removeClass 删除类，辅助函数
+ * @param {Object} DOM 对象
+ * @param {String} klass 类字符串
+ * @return {Object|Array} DOM 对象
+ */
+function _removeClass (element, klass) {
+  if (!element || !klass) {return}
+  var arr = element.item ? _map(element) : [element]
+  var regs = klass.split(' ').map(function (str) {
+    return new RegExp('(\\s+|^)' + str + '(\\s+|$)', 'g')
+  })
+  arr.map(function (node) {
+    var str = node.className
+    regs.map(function (reg) {
+      str = str.replace(reg, ' ').trim()
+    })
+    node.className = str
+  })
+  return element
+}
+
+/**
+ * _hasClass 判断**单**个元素是否含有类，辅助函数
+ * @param {Object} DOM 对象或 NodeList 对象
+ * @param {String} klass 类字符串
+ * @return {Boolean}
+ */
+function _hasClass (element, klass) {
+  if (!element || !klass) {return}
+  var arr = element.item ? _map(element) : [element],
+    result = true, strs = klass.split(' '), i = 0, l = strs.length, reg = null, temp = '', index = 0, len = arr.length
+  while (result && index < len) {
+    temp = arr[index].className
+    for (i = 0; i < l; i++) {
+      reg = new RegExp('(\\s+|^)' + strs[i] + '(\\s+|$)')
+      if (!reg.test(temp)) {
+        result = false
+        break
+      }
+    }
+    index++
+  }
+  return result
+}
+
+/**
+ * _toggleClass 交替类，辅助函数
+ * @param {Object} DOM 对象
+ * @param {String} klass 类字符串
+ * @return {Object|Array} DOM 对象
+ */
+function _toggleClass (element, klass) {
+  if (!element || !klass) {return}
+  var arr = element.item ? _map(element) : [element]
+  arr.map(function (node) {
+    var className = node.className, regexp = null
+    klass.split(' ').map(function (str) {
+      regexp = new RegExp('(\\s+|^)' + str + '(\\s+|$)', 'g')
+      if (regexp.test(className)) {
+        className = className.replace(regexp, ' ').trim()
+      } else {
+        className += ' ' + str
+      }
+    })
+    node.className = className
+  })
+  return element
+}
+
+var _mobileCheck = 'ontouchend' in document,
+  _pointCheck = window.PointerEvent || window.MSPointerEvent,
+  _prefixPointerEvent = function (pointerEvent) {
+      return window.MSPointerEvent ? 
+      'MSPointer' + pointerEvent.charAt(9).toUpperCase() + pointerEvent.substr(10) : pointerEvent
+  },
+  ev = {
+    click: 'click',
+    start: _mobileCheck ? (_pointCheck ? _prefixPointerEvent('pointerdown') : 'touchstart' ) : 'mousedown',
+    move: _mobileCheck ? (_pointCheck ? _prefixPointerEvent('pointermove') : 'touchmove') : 'mousemove',
+    end: _mobileCheck ? (_pointCheck ? _prefixPointerEvent('pointerup') : 'touchend') : 'mouseup',
+    cancel: _mobileCheck ? (_pointCheck ? _prefixPointerEvent('pointercancel') : 'touchcancel') : 'mousecancel'
+  }
+
+/**
+ * 事件处理对象 eventHandler
+ * @usage eventHandler.on(ev.start, dom, fn) //绑定事件
+ *        eventHandler.on(ev.start, dom, selector, fn) //事件委托
+ *        eventHandler.off(ev.start, dom) //卸载指定事件 （仅通过 eventHandler 绑定的事件）
+ *        eventHandler.off(dom) //卸载所有事件 （仅通过 eventHandler 绑定的事件）
+ *        eventHandler.trigger(ev.start, dom, 'args1', 'args2') //模拟事件并触发，第 3 个参数起都是传入参数
+ *  目前无法通过一次调用绑定多个事件, 如 eventHandler.on('touchstart touchmove', function () {...})
+ */
+var eventHandler = (function () {
+  /**
+   * store 存储 eventHandler 中的 dom 与 绑定事件
+   * 形如：
+     {
+       click: [{
+         dom: dom1,
+         fn: [fn1, fn2, ...]
+       }, {
+         dom: dom2,
+         fn: [...]
+       }]
+     }
+   */
+  var store = {}
+  
+  /**
+   * check 冒泡方式查找对应元素是否与 selector 匹配
+   * @param {String} selector 选择器字符串
+   * @param {Object} e 事件对象
+   * @param {Object} 父元素
+   * @param {Object|Null} 返回查找到的元素或 null
+   */
+  function check (selector, e, parentNode) {
+    if (!selector || !parentNode) {return null}
+    var nodes = [], target = e.target
+    
+    _map(parentNode.querySelectorAll(selector), function (node) {
+      nodes.push(node)
+    })
+    
+    while (target && nodes.indexOf(target) === -1 && target !== parentNode) {
+      target = target.parentNode
+    }
+    if (target === parentNode) {return null}
+    return target
+  }
+  
+  /**
+   * on 绑定方法
+   * @param eventName 事件名称
+   * @param dom 绑定事件的 DOM 元素
+   * @param selector 委托元素的 selector
+   * @param callback 回调函数
+   * @usage on('click', document.body, 'a', function () {console.log('click a link')})
+   */
+  function on (eventName, dom, selector, callback) {
+    if (!eventName || !dom) {return new Error('arguments wrong in on function. eventName:' + eventName + ' element: ' + dom)}
+    
+    var i = 0, item = null, l = 0, target = null
+    
+    if (typeof selector === 'function') {
+      callback = selector
+      selector = ''
+    }
+    
+    var arr = dom.item ? _map(dom) : [dom]
+    arr.map(function (dom) {
+      /**
+       * fn 需要进行委托处理后执行回调函数
+       */
+      var fn = function (e) {
+        if (selector) {
+          var node = check(selector, e, dom)
+          node && callback.call(node, e)
+        } else {
+          callback.call(dom, e)
+        }
+      }
+      
+      dom.addEventListener(eventName, fn)
+      
+      var temp = null
+      if (!store[eventName]) {
+        store[eventName] = [{
+          dom: dom,
+          fn: [fn]
+        }]
+      } else {
+        l = store[eventName].length
+        
+        for (i = 0; i < l; i++) {
+          temp = store[eventName][i]
+          if (temp.dom === dom) {
+            target = dom
+            temp.fn.push(fn)
+            break
+          }
+        }
+        
+        //not find dom in store[eventName]
+        if (!target) {
+          store[eventName].push({
+            dom: dom,
+            fn: [fn]
+          })
+        }
+      }
+    })
+    
+  }
+  
+  /**
+   * off 移除绑定方法
+   * @param eventName 事件名称
+   * @param dom 绑定事件的 DOM 元素
+   * @usage off('click', document.body)
+   */
+  function off (eventName, dom) {
+    if (!eventName) {return new Error('arguments wrong in on function. first arguments:' + eventName)}
+    
+    if (typeof eventName === 'object') {
+      dom = eventName
+      eventName = ''
+    }
+    
+    var temp = null, i = 0, j = 0, l = 0, len = 0, arr = []
+    arr = dom.item ? _map(dom) : [dom]
+    len = arr.length
+    if (eventName) {
+      if (!store[eventName]) {return}
+      l = store[eventName].length
+      for (i = 0; i < l; i++) {
+        temp = store[eventName][i]
+        for (j = 0; j < len; j++) {
+          if (arr[j] === temp.dom) {
+            removeEvent(arr[j], eventName, temp.fn)
+            break
+          }
+        }
+      }
+    } else {
+      for (eventName in store) {
+        l = store[eventName].length
+        for (i = 0; i < l; i++) {
+          temp = store[eventName][i]
+          for (j = 0; j < len; j++) {
+            if (arr[j] === temp.dom) {
+              removeEvent(arr[j], eventName, temp.fn)
+              break
+            }
+          }
+        }
+      }
+    }
+    
+    /**
+     * removeEvent 移除事件
+     * @param {Object} dom 
+     * @param {String} eventName 
+     * @param {Array} fnArray 回调事件数组
+     */
+    function removeEvent (dom, eventName, fnArray) {
+      var i = 0, l = 0, index = 0, temp = null
+      fnArray.map(function (fn) {
+        try {
+          dom.removeEventListener(eventName, fn)
+          
+          l = store[eventName].length
+          for (i; i < l; i++) {
+            temp = store[eventName][i]
+            index = temp.fn.indexOf(fn)
+            if (temp.dom === dom && index > -1) {
+              temp.fn.splice(index, 1)
+            }
+          }
+        } catch (e) {}
+      })
+    }
+    
+    // beauty store
+    for (eventName in store) {
+      var target = []
+      i = 0, l = store[eventName].length
+      for (i; i < l; i++) {
+        temp = store[eventName][i]
+        if (temp.fn && temp.fn.length !== 0) {
+          target.push(temp)
+        }
+      }
+      store[eventName] = target
+    }
+  }
+  
+  /**
+   * TODO
+   */
+  function trigger (eventName, dom) {
+    return
+  }
+  
+  return {on: on, off: off}
+  
+})()
+
+/**
+ * _append 插入元素
+ * @param {Object} DOM 元素
+ * @param {String|Object} 字符串或者 DOM 元素或者 NODELIST 
+ * @return {Object} DOM 元素
+ */
+function _append (dom, str) {
+  if (!dom || !str) {return}
+  var arr = dom.item ? _map(dom) : [dom]
+  arr.map(function (dom) {
+    var div = document.createElement('div')
+    if (typeof str === 'string') {
+      div.innerHTML = str
+      dom.appendChild(div)
+      var arr = _map(div.childNodes)
+      
+      arr.map(function (child) {
+        dom.insertBefore(child, div)
+      })
+      dom.removeChild(div)
+    } else if (typeof str === 'object') {
+      _map(str.item ? str : [str]).map(function (node) {
+        dom.appendChild(node)
+      })
+    }
+    
+  })
+  
+  return dom
+}
+
+/**
+ * _css 设置元素样式
+ * @type {Function} 
+ * @param {Object} dom DOM 元素或 NodeList 对象
+ * @param {Object} obj 样式数据
+ * @return {Object} DOM 元素
+ */
+function _css (dom, obj) {
+  var arr = dom.item ? _map(dom) : [dom], temp
+  arr.map(function (dom) {
+    for (var item in obj) {
+      temp = obj[item]
+      dom.style[item] = typeof temp === 'number' ? temp + 'px' : temp
+    }
+  })
+  return dom
+}
+
+/**
+ * _wrap 字符串包裹元素
+ * @param {Object} DOM 元素
+ * @param {String} 字符串
+ * @return {Object} DOM 元素
+ */
+function _wrap (dom, str) {
+  if (!dom || !str) {return}
+  
+  var div = document.createElement('div'),
+    target = document.createElement('div'),
+    p = dom.parentNode,
+    oldNode = div
+  div.innerHTML = str
+  
+  while(div.children.length > 0) {
+    div = div.children[0]
+  }
+  
+  p.insertBefore(target, dom)
+  
+  div.appendChild(dom)
+  
+  util.map(oldNode.children, function (node) {
+    p.insertBefore(node ,target)
+  })
+  
+  p.removeChild(target)
+  
+  target = null
+  div = null
+  
+  return dom
+}
+
+ /**
+ * _parent 查找父元素
+ * @param {Object} DOM 元素
+ * @param {String} 字符串
+ * @return {Object} DOM 元素
+ */
+function _parent (dom, selector) {
+  if (!dom || !selector) {return}
+  
+  var oldNode = dom
+  
+  while (dom && !check(dom, selector)) {
+    dom = dom.parentNode
+  }
+  
+  /**
+   * 检查元素是否能够对应 selector
+   */
+  function check (dom, selector) {
+    var p = dom.parentNode, result = false
+    if (p) {
+      util.map(p.querySelectorAll(selector), function (node) {
+        if (node === dom) {
+          result = true
+        }
+      })
+    }
+    
+    return result
+  }
+  
+  if (oldNode === dom) {return}
+
+  return dom
+}
+
+var util = {
+  map: _map,
+  addClass: _addClass,
+  removeClass: _removeClass,
+  hasClass: _hasClass,
+  toggleClass: _toggleClass,
+  append: _append,
+  css: _css,
+  wrap: _wrap,
+  parent: _parent,
+  ev: ev,
+  eventHandler: eventHandler
+}
+
+export default util
