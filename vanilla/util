@@ -1,11 +1,20 @@
 /**
+ * _isMulit 判断是否是 DOM 元素集合
+ * @param {Object|Array} 需要判断的对象
+ * @return {Boolean} 结果
+ */
+function _isMulit (obj) {
+  return obj.item && !obj.tagName
+}
+
+/**
  * _map 遍历对象，辅助函数
  * @param {Object|Array} arr 遍历对象
  * @param {Function} cb 回调函数，传入参数
       @param {Object} 数组子项
       @param {Number} 序号
  * @return {Array} 数组对象
- */
+ */ 
 function _map (arr, cb) {
   if (!arr) {return}
   return Array.prototype.map.call(arr, function (o, i) {
@@ -188,7 +197,7 @@ var eventHandler = (function () {
       selector = ''
     }
     
-    var arr = (Object.prototype.toString.call(dom) === '[object NodeList]') ? _map(dom) : [dom]
+    var arr = _isMulit(dom) ? _map(dom) : [dom]
     arr.map(function (dom) {
       /**
        * fn 需要进行委托处理后执行回调函数
@@ -249,7 +258,7 @@ var eventHandler = (function () {
     }
     
     var temp = null, i = 0, j = 0, l = 0, len = 0, arr = []
-    arr = (Object.prototype.toString.call(dom) === '[object NodeList]') ? _map(dom) : [dom]
+    arr = _isMulit(dom) ? _map(dom) : [dom]
     len = arr.length
     if (eventName) {
       if (!store[eventName]) {return}
@@ -335,7 +344,7 @@ var eventHandler = (function () {
  */
 function _append (dom, str) {
   if (!dom || !str) {return}
-  var arr = (Object.prototype.toString.call(dom) === '[object NodeList]') ? _map(dom) : [dom]
+  var arr = _isMulit(dom) ? _map(dom) : [dom]
   arr.map(function (dom) {
     var div = document.createElement('div')
     if (typeof str === 'string') {
@@ -366,7 +375,7 @@ function _append (dom, str) {
  * @return {Object} DOM 元素
  */
 function _css (dom, obj) {
-  var arr = (Object.prototype.toString.call(dom) === '[object NodeList]') ? _map(dom) : [dom], temp
+  var arr = _isMulit(dom) ? _map(dom) : [dom], temp
   arr.map(function (dom) {
     for (var item in obj) {
       temp = obj[item]
