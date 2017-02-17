@@ -1,9 +1,9 @@
 /**
- * _isMulit 判断是否是 DOM 元素集合
+ * _isMulti 判断是否是 DOM 元素集合
  * @param {Object|Array} 需要判断的对象
  * @return {Boolean} 结果
  */
-function _isMulit (obj) {
+function _isMulti (obj) {
   return obj.item && !obj.tagName
 }
 
@@ -197,7 +197,7 @@ var eventHandler = (function () {
       selector = ''
     }
     
-    var arr = _isMulit(dom) ? _map(dom) : [dom]
+    var arr = _isMulti(dom) ? _map(dom) : [dom]
     arr.map(function (dom) {
       /**
        * fn 需要进行委托处理后执行回调函数
@@ -258,7 +258,7 @@ var eventHandler = (function () {
     }
     
     var temp = null, i = 0, j = 0, l = 0, len = 0, arr = []
-    arr = _isMulit(dom) ? _map(dom) : [dom]
+    arr = _isMulti(dom) ? _map(dom) : [dom]
     len = arr.length
     if (eventName) {
       if (!store[eventName]) {return}
@@ -344,25 +344,37 @@ var eventHandler = (function () {
  */
 function _append (dom, str) {
   if (!dom || !str) {return}
-  var arr = _isMulit(dom) ? _map(dom) : [dom]
-  arr.map(function (dom) {
-    var div = document.createElement('div')
-    if (typeof str === 'string') {
-      div.innerHTML = str
-      dom.appendChild(div)
-      var arr = _map(div.childNodes)
-      
-      arr.map(function (child) {
-        dom.insertBefore(child, div)
-      })
-      dom.removeChild(div)
-    } else if (typeof str === 'object') {
+  var arr = _isMulti(dom) ? _map(dom) : [dom]
+  
+  if (typeof str === 'string') {
+    arr.map(function (dom) {
+      dom.insertAdjacentHTML('beforeend', str)
+    })
+  } else if (typeof str === 'object') {
+    arr.map(function (dom) {
       _map(str.item ? str : [str]).map(function (node) {
         dom.appendChild(node)
       })
-    }
-    
-  })
+    })
+  }
+  
+  // arr.map(function (dom) {
+    // var div = document.createElement('div')
+    // if (typeof str === 'string') {
+      // div.innerHTML = str
+      // dom.appendChild(div)
+      // var arr = _map(div.childNodes)
+      
+      // arr.map(function (child) {
+        // dom.insertBefore(child, div)
+      // })
+      // dom.removeChild(div)
+    // } else if (typeof str === 'object') {
+      // _map(str.item ? str : [str]).map(function (node) {
+        // dom.appendChild(node)
+      // })
+    // }
+  // })
   
   return dom
 }
@@ -375,7 +387,7 @@ function _append (dom, str) {
  * @return {Object} DOM 元素
  */
 function _css (dom, obj) {
-  var arr = _isMulit(dom) ? _map(dom) : [dom], temp
+  var arr = _isMulti(dom) ? _map(dom) : [dom], temp
   arr.map(function (dom) {
     for (var item in obj) {
       temp = obj[item]
@@ -394,30 +406,44 @@ function _css (dom, obj) {
 function _wrap (dom, str) {
   if (!dom || !str) {return}
   
-  var div = document.createElement('div'),
-    target = document.createElement('div'),
-    p = dom.parentNode,
-    oldNode = div
-  div.innerHTML = str
+  var p = dom.parentNode
   
-  while(div.children.length > 0) {
+  p.insertAdjacentHTML('afterbegin', str)
+  
+  var div = p.children[0]
+  
+  while (div.children.length > 0) {
     div = div.children[0]
   }
   
-  p.insertBefore(target, dom)
-  
   div.appendChild(dom)
   
-  util.map(oldNode.children, function (node) {
-    p.insertBefore(node ,target)
-  })
-  
-  p.removeChild(target)
-  
-  target = null
-  div = null
-  
   return dom
+  
+  // var div = document.createElement('div'),
+    // target = document.createElement('div'),
+    // p = dom.parentNode,
+    // oldNode = div
+  // div.innerHTML = str
+  
+  // while(div.children.length > 0) {
+    // div = div.children[0]
+  // }
+  
+  // p.insertBefore(target, dom)
+  
+  // div.appendChild(dom)
+  
+  // util.map(oldNode.children, function (node) {
+    // p.insertBefore(node, target)
+  // })
+  
+  // p.removeChild(target)
+  
+  // target = null
+  // div = null
+  
+  // return dom
 }
 
  /**
